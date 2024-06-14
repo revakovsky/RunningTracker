@@ -1,4 +1,4 @@
-package com.revakovskyi.convention
+package com.revakovskyi.convention.application
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension

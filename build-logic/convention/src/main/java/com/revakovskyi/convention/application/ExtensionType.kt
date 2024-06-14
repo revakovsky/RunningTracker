@@ -1,4 +1,4 @@
-package com.revakovskyi.convention
+package com.revakovskyi.convention.application
 
 internal enum class ExtensionType {
     APPLICATION, LIBRARY

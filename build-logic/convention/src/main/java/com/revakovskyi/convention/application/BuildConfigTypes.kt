@@ -1,4 +1,4 @@
-package com.revakovskyi.convention
+package com.revakovskyi.convention.application
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.BuildType

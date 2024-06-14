@@ -1,8 +1,8 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.revakovskyi.convention.ExtensionType
-import com.revakovskyi.convention.configureBuildTypes
-import com.revakovskyi.convention.configureKotlinAndroid
-import com.revakovskyi.convention.libs
+import com.revakovskyi.convention.application.ExtensionType
+import com.revakovskyi.convention.application.configureBuildTypes
+import com.revakovskyi.convention.application.configureKotlinAndroid
+import com.revakovskyi.convention.application.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

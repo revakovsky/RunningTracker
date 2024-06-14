@@ -1,6 +1,6 @@
 plugins {
+    alias(libs.plugins.runningtracker.android.application.compose)
     alias(libs.plugins.mapsplatform.secrets.plugin)
-    alias(libs.plugins.runningtracker.android.application)
 }
 
 android {
@@ -13,12 +13,6 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -28,6 +22,7 @@ android {
 
 dependencies {
 
+    // Project modules
     implementation(projects.core.presentation.ui)
     implementation(projects.core.presentation.designSystem)
     implementation(projects.core.domain)
@@ -53,18 +48,15 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // Compose
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
+
+    // Material
+    implementation(libs.androidx.material.icons.extended)
 
     // Google
     api(libs.core)
