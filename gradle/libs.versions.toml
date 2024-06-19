@@ -174,3 +174,4 @@ room = { id = "androidx.room", version.ref = "room" }
 # Our custom gradle plugins
 runningtracker-android-application = { id = "runningtracker.android.application", version = "unspecified" }
 runningtracker-android-application-compose = { id = "runningtracker.android.application.compose", version = "unspecified" }
+runningtracker-android-library = { id = "runningtracker.android.library", version = "unspecified" }
