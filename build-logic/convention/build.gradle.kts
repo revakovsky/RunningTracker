@@ -40,5 +40,9 @@ gradlePlugin {
             id = "runningtracker.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = "runningtracker.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
     }
 }
