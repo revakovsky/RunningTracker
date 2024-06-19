@@ -122,9 +122,9 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
 # Room
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 # Material
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -177,6 +177,7 @@ runningtracker-android-application-compose = { id = "runningtracker.android.appl
 runningtracker-android-library = { id = "runningtracker.android.library", version = "unspecified" }
 runningtracker-android-library-compose = { id = "runningtracker.android.library.compose", version = "unspecified" }
 runningtracker-android-feature-ui = { id = "runningtracker.android.feature.ui", version = "unspecified" }
+runningtracker-android-room = { id = "runningtracker.android.room", version = "unspecified" }
 
 # __________________________________________________________________________________________________
 
