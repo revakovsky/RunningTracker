@@ -31,6 +31,7 @@ val Poppins = FontFamily(
 )
 
 val Typography = Typography(
+    // small descriptions
     bodySmall = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
@@ -57,7 +58,20 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 24.sp,
     ),
+    // app description
+    headlineSmall = TextStyle(
+        fontFamily = Poppins,
+        fontSize = 20.sp,
+        color = TrackerWhite
+    ),
+    // main title
     headlineMedium = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp,
+        color = TrackerWhite
+    ),
+    headlineLarge = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
