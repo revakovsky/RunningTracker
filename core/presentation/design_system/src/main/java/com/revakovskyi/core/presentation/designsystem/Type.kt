@@ -45,14 +45,25 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 22.sp,
     ),
+    // text in text fields
     bodyLarge = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
+        color = TrackerGray
     ),
-    labelLarge = TextStyle(
+    // text field text descriptions
+    labelSmall = TextStyle(
+        fontFamily = Poppins,
+        fontSize = 12.sp,
+        lineHeight = 20.sp,
+        color = TrackerGray,
+        letterSpacing = 0.5.sp,
+    ),
+    // input text field requirements
+    labelMedium = TextStyle(
         fontFamily = Poppins,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,

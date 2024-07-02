@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -61,7 +60,7 @@ fun OutlinedActionButton(
             Text(
                 text = text,
                 modifier = Modifier.alpha(if (isLoading) 0f else 1f),
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodyMedium
             )
 
         }

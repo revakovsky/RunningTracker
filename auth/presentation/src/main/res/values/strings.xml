@@ -6,4 +6,16 @@
     <string name="sign_up">Sign Up</string>
     <string name="app_logo">App logo</string>
     <string name="running_tracker">Running Tracker</string>
+    <string name="at_least_x_characters">At least %1$d characters</string>
+    <string name="at_least_one_number">At least one number</string>
+    <string name="contains_a_lower_character">Contains a lower character</string>
+    <string name="contains_an_upper_case_character">Contains an upper case character</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="login">Login</string>
+    <string name="example_email">example@test.com</string>
+    <string name="email">Email</string>
+    <string name="must_be_a_valid_email">Must be a valid email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
 </resources>
