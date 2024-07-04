@@ -117,7 +117,7 @@ private fun RegisterScreenRootScreen(
             TrackerTextField(
                 state = state.email,
                 startIcon = EmailIcon,
-                endIcon = if (state.isEmailValid) CheckIcon else null,
+                endIcon = if (state.isValidEmail) CheckIcon else null,
                 hint = stringResource(R.string.example_email),
                 title = stringResource(R.string.email),
                 additionalInfo = stringResource(R.string.must_be_a_valid_email),
