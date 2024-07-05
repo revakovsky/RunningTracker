@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.presentation.designsystem.LogoIcon
@@ -69,7 +70,8 @@ fun IntroScreen(
 
             Text(
                 text = stringResource(R.string.app_description),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -78,7 +80,7 @@ fun IntroScreen(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.sign_in),
                 isLoading = false,
-                onClick = { onAction(IntroAction.OnSignUpClick) }
+                onClick = { onAction(IntroAction.OnSignInClick) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_to_the_running_tracker">Welcome to the Running Tracker !</string>
+    <string name="welcome_to_the_running_tracker">Welcome to the Running Tracker</string>
     <string name="app_description">Track you runs, set goals and achieve fitness milestones with our intuitive app</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
@@ -12,7 +12,6 @@
     <string name="contains_an_upper_case_character">Contains an upper case character</string>
     <string name="create_an_account">Create an account</string>
     <string name="already_have_an_account">Already have an account?</string>
-    <string name="login">Login</string>
     <string name="example_email">example@test.com</string>
     <string name="email">Email</string>
     <string name="must_be_a_valid_email">Must be a valid email</string>

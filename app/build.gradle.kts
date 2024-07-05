@@ -59,6 +59,9 @@ dependencies {
     // Material
     implementation(libs.androidx.material.icons.extended)
 
+    // Koin
+    api(libs.bundles.koin)
+
     // Google
     api(libs.core)
 

@@ -1,7 +1,7 @@
 @file:Suppress("OPT_IN_USAGE_FUTURE_ERROR")
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.revakovskyi.auth.presentation.register
+package com.revakovskyi.auth.presentation.signUp
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.text2.input.textAsFlow
@@ -14,11 +14,11 @@ import com.revakovskyi.auth.domain.UserDataValidator
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class RegisterViewModel(
+class SignUpViewModel(
     private val userDataValidator: UserDataValidator,
 ) : ViewModel() {
 
-    var state by mutableStateOf(RegisterState())
+    var state by mutableStateOf(SignUpState())
         private set
 
 
@@ -26,8 +26,10 @@ class RegisterViewModel(
         state.email
             .textAsFlow()
             .onEach { email ->
+                val isValidEmail = userDataValidator.isValidEmail(email.toString())
                 state = state.copy(
-                    isValidEmail = userDataValidator.isValidEmail(email.toString())
+                    isValidEmail = isValidEmail,
+                    canRegister = isValidEmail && state.passwordValidationState.isValidPassword && !state.isRegistering
                 )
             }
             .launchIn(viewModelScope)
@@ -35,14 +37,16 @@ class RegisterViewModel(
         state.password
             .textAsFlow()
             .onEach { password ->
+                val passwordValidationState = userDataValidator.isValidPassword(password.toString())
                 state = state.copy(
-                    passwordValidationState = userDataValidator.isValidPassword(password.toString())
+                    passwordValidationState = passwordValidationState,
+                    canRegister = state.isValidEmail && passwordValidationState.isValidPassword && !state.isRegistering
                 )
             }
             .launchIn(viewModelScope)
     }
 
-    fun onAction(action: RegisterAction) {
+    fun onAction(action: SignUpAction) {
         // TODO: add the code
     }
 

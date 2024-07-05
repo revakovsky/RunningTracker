@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.revakovskyi.auth.presentation.register
+package com.revakovskyi.auth.presentation.signUp
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -44,11 +44,13 @@ import org.koin.androidx.compose.koinViewModel
 private const val TAG = "clickable_text"
 
 @Composable
-fun RegisterScreenRoot(
-    viewModel: RegisterViewModel = koinViewModel(),
+fun SignUpScreenRoot(
+    viewModel: SignUpViewModel = koinViewModel(),
+    onSignInClick: () -> Unit,
+    onSuccessfulRegistration: () -> Unit,
 ) {
 
-    RegisterScreenRootScreen(
+    SignUpScreen(
         state = viewModel.state,
         onAction = viewModel::onAction
     )
@@ -57,9 +59,9 @@ fun RegisterScreenRoot(
 
 
 @Composable
-private fun RegisterScreenRootScreen(
-    state: RegisterState,
-    onAction: (RegisterAction) -> Unit,
+private fun SignUpScreen(
+    state: SignUpState,
+    onAction: (SignUpAction) -> Unit,
 ) {
 
     GradientBackground {
@@ -85,7 +87,7 @@ private fun RegisterScreenRootScreen(
                     )
                 ) {
                     append(stringResource(R.string.already_have_an_account) + " ")
-                    pushStringAnnotation(tag = TAG, annotation = stringResource(R.string.login))
+                    pushStringAnnotation(tag = TAG, annotation = stringResource(R.string.sign_in))
 
                     withStyle(
                         style = SpanStyle(
@@ -94,7 +96,7 @@ private fun RegisterScreenRootScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        append(stringResource(R.string.login))
+                        append(stringResource(R.string.sign_in))
                     }
                 }
             }
@@ -107,7 +109,7 @@ private fun RegisterScreenRootScreen(
                         start = offset,
                         end = offset
                     ).firstOrNull()?.let {
-                        onAction(RegisterAction.OnLoginClick)
+                        onAction(SignUpAction.OnSignInClick)
                     }
                 }
             )
@@ -131,7 +133,7 @@ private fun RegisterScreenRootScreen(
                 isPasswordVisible = state.isPasswordVisible,
                 hint = stringResource(R.string.password),
                 title = stringResource(R.string.password),
-                onTogglePasswordVisibility = { onAction(RegisterAction.OnTogglePasswordVisibilityClick) }
+                onTogglePasswordVisibility = { onAction(SignUpAction.OnTogglePasswordVisibilityClick) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -171,7 +173,7 @@ private fun RegisterScreenRootScreen(
                 text = stringResource(R.string.register),
                 isLoading = state.isRegistering,
                 enabled = state.canRegister,
-                onClick = { onAction(RegisterAction.OnRegisterClick) }
+                onClick = { onAction(SignUpAction.OnRegisterClick) }
             )
 
         }
