@@ -17,4 +17,6 @@
     <string name="must_be_a_valid_email">Must be a valid email</string>
     <string name="password">Password</string>
     <string name="register">Register</string>
+    <string name="error_email_exists">A user with this email has already exists</string>
+    <string name="registration_successful">Registration is successful! You can Sign In now</string>
 </resources>
