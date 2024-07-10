@@ -44,6 +44,8 @@ fun IntroScreen(
 
     GradientBackground {
 
+        Spacer(modifier = Modifier.height(48.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()

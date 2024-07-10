@@ -37,7 +37,6 @@ import com.revakovskyi.core.presentation.designsystem.CrossIcon
 import com.revakovskyi.core.presentation.designsystem.EmailIcon
 import com.revakovskyi.core.presentation.designsystem.Poppins
 import com.revakovskyi.core.presentation.designsystem.TrackerDarkRed
-import com.revakovskyi.core.presentation.designsystem.TrackerGray
 import com.revakovskyi.core.presentation.designsystem.TrackerGreen
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
@@ -58,12 +57,12 @@ fun SignUpScreenRoot(
 
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
-            is RegisterEvent.Error -> {
+            is SignUpEvent.Error -> {
                 keyBoardController?.hide()
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_LONG).show()
             }
 
-            RegisterEvent.RegistrationSuccess -> {
+            SignUpEvent.RegistrationSuccess -> {
                 keyBoardController?.hide()
                 Toast.makeText(context, R.string.registration_successful, Toast.LENGTH_LONG).show()
                 onSuccessfulRegistration()
@@ -73,7 +72,13 @@ fun SignUpScreenRoot(
 
     SignUpScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                SignUpAction.OnSignInClick -> onSignInClick()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 
 }
@@ -104,10 +109,10 @@ private fun SignUpScreen(
                 withStyle(
                     style = SpanStyle(
                         fontFamily = Poppins,
-                        color = TrackerGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 ) {
-                    append(stringResource(R.string.already_have_an_account) + " ")
+                    append(stringResource(R.string.already_have_an_account) + "  ")
                     pushStringAnnotation(tag = TAG, annotation = stringResource(R.string.sign_in))
 
                     withStyle(

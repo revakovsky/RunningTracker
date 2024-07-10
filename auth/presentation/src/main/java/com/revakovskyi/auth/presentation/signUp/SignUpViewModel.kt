@@ -31,7 +31,7 @@ class SignUpViewModel(
     var state by mutableStateOf(SignUpState())
         private set
 
-    private val eventChannel = Channel<RegisterEvent>()
+    private val eventChannel = Channel<SignUpEvent>()
     val events = eventChannel.receiveAsFlow()
 
 
@@ -86,12 +86,12 @@ class SignUpViewModel(
                 is Result.Error -> {
                     if (result.error == DataError.Network.CONFLICT) {
                         eventChannel.send(
-                            RegisterEvent.Error(UiText.StringResource(R.string.error_email_exists))
+                            SignUpEvent.Error(UiText.StringResource(R.string.error_email_exists))
                         )
-                    } else eventChannel.send(RegisterEvent.Error(result.error.asUiText()))
+                    } else eventChannel.send(SignUpEvent.Error(result.error.asUiText()))
                 }
 
-                is Result.Success -> eventChannel.send(RegisterEvent.RegistrationSuccess)
+                is Result.Success -> eventChannel.send(SignUpEvent.RegistrationSuccess)
             }
         }
     }
