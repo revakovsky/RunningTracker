@@ -58,12 +58,10 @@ fun SignUpScreenRoot(
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             is SignUpEvent.Error -> {
-                keyBoardController?.hide()
                 Toast.makeText(context, event.error.asString(context), Toast.LENGTH_LONG).show()
             }
 
             SignUpEvent.RegistrationSuccess -> {
-                keyBoardController?.hide()
                 Toast.makeText(context, R.string.registration_successful, Toast.LENGTH_LONG).show()
                 onSuccessfulRegistration()
             }
@@ -73,6 +71,8 @@ fun SignUpScreenRoot(
     SignUpScreen(
         state = viewModel.state,
         onAction = { action ->
+            keyBoardController?.hide()
+
             when (action) {
                 SignUpAction.OnSignInClick -> onSignInClick()
                 else -> Unit

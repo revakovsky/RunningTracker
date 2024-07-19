@@ -12,7 +12,7 @@ import io.ktor.client.HttpClient
 
 class AuthRepositoryImpl(
     private val httpClient: HttpClient,
-    private val sessionStorage: SessionStorage
+    private val sessionStorage: SessionStorage,
 ) : AuthRepository {
 
     override suspend fun register(
