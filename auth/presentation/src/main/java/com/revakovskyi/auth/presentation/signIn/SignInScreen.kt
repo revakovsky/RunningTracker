@@ -132,7 +132,7 @@ private fun SignInScreen(
             ActionButton(
                 text = stringResource(R.string.sign_in),
                 isLoading = state.isSigningIn,
-                enabled = state.canSignIn,
+                enabled = state.canSignIn && !state.isSigningIn,
                 onClick = { onAction(SignInAction.OnSignInClick) }
             )
 

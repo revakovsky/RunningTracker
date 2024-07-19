@@ -6,5 +6,6 @@ import com.revakovskyi.core.domain.util.EmptyDataResult
 interface AuthRepository {
 
     suspend fun register(email: String, password: String): EmptyDataResult<DataError.Network>
+    suspend fun signIn(email: String, password: String): EmptyDataResult<DataError.Network>
 
 }

@@ -1,5 +1,6 @@
 package com.revakovskyi.runningtracker.nav
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,6 +19,7 @@ fun NavigationRoot(
     NavHost(navController = navHostController, startDestination = "auth") {
 
         authGraph(navHostController)
+        runGraph(navHostController)
 
     }
 
@@ -71,4 +73,15 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
 
     }
 
+}
+
+
+private fun NavGraphBuilder.runGraph(navHostController: NavHostController) {
+    navigation(startDestination = "run_overview", route = "run") {
+
+        composable(route = "run_overview") {
+            Text(text = "Run overview")
+        }
+
+    }
 }
