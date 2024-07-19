@@ -11,15 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -30,6 +36,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
+import com.revakovskyi.core.peresentation.ui.rememberImeState
 import com.revakovskyi.core.presentation.designsystem.EmailIcon
 import com.revakovskyi.core.presentation.designsystem.Poppins
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
@@ -83,6 +90,13 @@ private fun SignInScreen(
     state: SignInState,
     onAction: (action: SignInAction) -> Unit,
 ) {
+    val localFocusManager = LocalFocusManager.current
+    val bringIntoButtonViewRequester = remember { BringIntoViewRequester() }
+    val imeStateOpen by rememberImeState()
+
+    LaunchedEffect(imeStateOpen) {
+        if (!imeStateOpen) localFocusManager.clearFocus()
+    }
 
     GradientBackground {
 
@@ -114,7 +128,8 @@ private fun SignInScreen(
                 endIcon = null,
                 hint = stringResource(R.string.example_email),
                 title = stringResource(R.string.email),
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +139,9 @@ private fun SignInScreen(
                 isPasswordVisible = state.isPasswordVisible,
                 hint = stringResource(R.string.password),
                 title = stringResource(R.string.password),
-                onTogglePasswordVisibility = { onAction(SignInAction.OnTogglePasswordVisibility) }
+                bringIntoViewRequester = bringIntoButtonViewRequester,
+                onTogglePasswordVisibility = { onAction(SignInAction.OnTogglePasswordVisibility) },
+                onConfirm = { localFocusManager.clearFocus() }
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -133,7 +150,8 @@ private fun SignInScreen(
                 text = stringResource(R.string.sign_in),
                 isLoading = state.isSigningIn,
                 enabled = state.canSignIn && !state.isSigningIn,
-                onClick = { onAction(SignInAction.OnSignInClick) }
+                bringIntoViewRequester = bringIntoButtonViewRequester,
+                onClick = { onAction(SignInAction.OnSignInClick) },
             )
 
             val annotatedString = buildAnnotatedString {

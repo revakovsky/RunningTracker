@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.revakovskyi.core.peresentation.ui.setUpImeWindowInsets
 import com.revakovskyi.core.presentation.designsystem.RunningTrackerTheme
 import com.revakovskyi.runningtracker.nav.NavigationRoot
 
@@ -15,6 +16,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setUpImeWindowInsets()
         setContent {
             RunningTrackerTheme {
                 Surface(
@@ -27,4 +29,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

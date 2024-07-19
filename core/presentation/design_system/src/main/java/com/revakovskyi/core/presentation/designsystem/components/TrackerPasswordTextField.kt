@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text2.BasicSecureTextField
 import androidx.compose.foundation.text2.input.TextFieldState
@@ -26,20 +27,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.core.presentation.designsystem.EyeClosedIcon
 import com.revakovskyi.core.presentation.designsystem.EyeOpenedIcon
 import com.revakovskyi.core.presentation.designsystem.LockIcon
 import com.revakovskyi.core.presentation.designsystem.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun TrackerPasswordTextField(
@@ -48,9 +52,11 @@ fun TrackerPasswordTextField(
     isPasswordVisible: Boolean,
     hint: String,
     title: String?,
+    bringIntoViewRequester: BringIntoViewRequester = BringIntoViewRequester(),
     onTogglePasswordVisibility: () -> Unit,
+    onConfirm: () -> Unit,
 ) {
-
+    val scope = rememberCoroutineScope()
     var isFocused by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -73,6 +79,11 @@ fun TrackerPasswordTextField(
                 color = MaterialTheme.colorScheme.onBackground
             ),
             keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done,
+            onSubmit = {
+                onConfirm()
+                true
+            },
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
@@ -89,7 +100,14 @@ fun TrackerPasswordTextField(
                     shape = RoundedCornerShape(16.dp)
                 )
                 .padding(horizontal = 12.dp)
-                .onFocusChanged { isFocused = it.isFocused },
+                .onFocusEvent { event ->
+                    isFocused = event.isFocused
+                    if (isFocused) {
+                        scope.launch {
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
             decorator = { innerBox ->
 
                 Row(

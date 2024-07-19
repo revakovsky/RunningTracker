@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text2.BasicTextField2
 import androidx.compose.foundation.text2.input.TextFieldLineLimits
@@ -31,10 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
@@ -49,8 +51,8 @@ fun TrackerTextField(
     error: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     additionalInfo: String? = null,
+    onNextClick: () -> Unit,
 ) {
-
     var isFocused by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -91,17 +93,20 @@ fun TrackerTextField(
             textStyle = LocalTextStyle.current.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Next,
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { onNextClick() }
+            ),
             lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (isFocused) {
-                        MaterialTheme.colorScheme.primary.copy(
-                            alpha = 0.05f
-                        )
-                    } else MaterialTheme.colorScheme.surface
+                    if (isFocused) MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                    else MaterialTheme.colorScheme.surface
                 )
                 .border(
                     width = 1.dp,
@@ -109,7 +114,7 @@ fun TrackerTextField(
                     shape = RoundedCornerShape(16.dp)
                 )
                 .padding(12.dp)
-                .onFocusChanged { isFocused = it.isFocused },
+                .onFocusEvent { event -> isFocused = event.isFocused },
             decorator = { innerBox ->
 
                 Row(

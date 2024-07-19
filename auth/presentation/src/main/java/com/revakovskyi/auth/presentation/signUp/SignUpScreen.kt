@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
@@ -18,9 +19,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -32,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.domain.UserDataValidator
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
+import com.revakovskyi.core.peresentation.ui.rememberImeState
 import com.revakovskyi.core.presentation.designsystem.CheckIcon
 import com.revakovskyi.core.presentation.designsystem.CrossIcon
 import com.revakovskyi.core.presentation.designsystem.EmailIcon
@@ -89,6 +96,13 @@ private fun SignUpScreen(
     state: SignUpState,
     onAction: (SignUpAction) -> Unit,
 ) {
+    val localFocusManager = LocalFocusManager.current
+    val bringIntoButtonViewRequester = remember { BringIntoViewRequester() }
+    val imeStateOpen by rememberImeState()
+
+    LaunchedEffect(imeStateOpen) {
+        if (!imeStateOpen) localFocusManager.clearFocus()
+    }
 
     GradientBackground {
 
@@ -149,7 +163,8 @@ private fun SignUpScreen(
                 hint = stringResource(R.string.example_email),
                 title = stringResource(R.string.email),
                 additionalInfo = stringResource(R.string.must_be_a_valid_email),
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -159,7 +174,9 @@ private fun SignUpScreen(
                 isPasswordVisible = state.isPasswordVisible,
                 hint = stringResource(R.string.password),
                 title = stringResource(R.string.password),
-                onTogglePasswordVisibility = { onAction(SignUpAction.OnTogglePasswordVisibilityClick) }
+                bringIntoViewRequester = bringIntoButtonViewRequester,
+                onTogglePasswordVisibility = { onAction(SignUpAction.OnTogglePasswordVisibilityClick) },
+                onConfirm = { localFocusManager.clearFocus() }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -199,7 +216,8 @@ private fun SignUpScreen(
                 text = stringResource(R.string.register),
                 isLoading = state.isRegistering,
                 enabled = state.canRegister,
-                onClick = { onAction(SignUpAction.OnRegisterClick) }
+                bringIntoViewRequester = bringIntoButtonViewRequester,
+                onClick = { onAction(SignUpAction.OnRegisterClick) },
             )
 
         }
