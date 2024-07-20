@@ -15,3 +15,4 @@ An app that tracks your running and displays a running route on the map
 - Encrypted SharedPreferences
 - Bearer tokens access and refresh mechanism and stay login by using these tokens
 - Work with focusable states and bringIntoButtonViewRequester
+- Android Splash screen
