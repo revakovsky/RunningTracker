@@ -20,10 +20,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setUpImeWindowInsets()
         installSplashScreen().apply {
             setKeepOnScreenCondition { viewModel.state.isCheckingAuthInfo }
         }
+        setUpImeWindowInsets()
         setContent {
             RunningTrackerTheme {
                 Surface(
