@@ -14,9 +14,13 @@ import com.revakovskyi.auth.presentation.signUp.SignUpScreenRoot
 @Composable
 fun NavigationRoot(
     navHostController: NavHostController,
+    isSignedIn: Boolean,
 ) {
 
-    NavHost(navController = navHostController, startDestination = "auth") {
+    NavHost(
+        navController = navHostController,
+        startDestination = if (isSignedIn) "run" else "auth"
+    ) {
 
         authGraph(navHostController)
         runGraph(navHostController)
