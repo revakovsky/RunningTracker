@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="running_tracker">Running Tracker</string>
+    <string name="analytics">Analytics</string>
+    <string name="log_out">Log out</string>
+    <string name="start_a_new_run">Start a new run</string>
+</resources>

@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.rememberImeState
-import com.revakovskyi.core.presentation.designsystem.EmailIcon
-import com.revakovskyi.core.presentation.designsystem.Poppins
+import com.revakovskyi.core.presentation.designsystem.theme.EmailIcon
+import com.revakovskyi.core.presentation.designsystem.theme.Poppins
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
 import com.revakovskyi.core.presentation.designsystem.components.TrackerPasswordTextField

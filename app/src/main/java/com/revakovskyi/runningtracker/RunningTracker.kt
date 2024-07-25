@@ -4,6 +4,7 @@ import android.app.Application
 import com.revakovskyi.auth.data.di.authDataModule
 import com.revakovskyi.auth.presentation.di.authViewModelModule
 import com.revakovskyi.core.data.di.coreDataModule
+import com.revakovskyi.run.presentation.di.runViewModelModule
 import com.revakovskyi.runningtracker.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -34,6 +35,7 @@ class RunningTracker : Application() {
                 authViewModelModule,
                 authDataModule,
                 coreDataModule,
+                runViewModelModule,
             )
         }
     }

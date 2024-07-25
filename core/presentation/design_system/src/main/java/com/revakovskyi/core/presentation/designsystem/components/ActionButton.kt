@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.revakovskyi.core.presentation.designsystem.TrackerBlack
-import com.revakovskyi.core.presentation.designsystem.TrackerGray
+import com.revakovskyi.core.presentation.designsystem.theme.TrackerBlack
+import com.revakovskyi.core.presentation.designsystem.theme.TrackerGray
 
 @Composable
 fun ActionButton(

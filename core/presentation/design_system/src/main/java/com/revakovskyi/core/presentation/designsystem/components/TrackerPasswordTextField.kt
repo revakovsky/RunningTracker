@@ -42,9 +42,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.revakovskyi.core.presentation.designsystem.EyeClosedIcon
-import com.revakovskyi.core.presentation.designsystem.EyeOpenedIcon
-import com.revakovskyi.core.presentation.designsystem.LockIcon
+import com.revakovskyi.core.presentation.designsystem.theme.EyeClosedIcon
+import com.revakovskyi.core.presentation.designsystem.theme.EyeOpenedIcon
+import com.revakovskyi.core.presentation.designsystem.theme.LockIcon
 import com.revakovskyi.core.presentation.designsystem.R
 import kotlinx.coroutines.launch
 

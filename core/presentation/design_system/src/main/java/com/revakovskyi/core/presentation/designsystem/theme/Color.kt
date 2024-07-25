@@ -1,4 +1,4 @@
-package com.revakovskyi.core.presentation.designsystem
+package com.revakovskyi.core.presentation.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

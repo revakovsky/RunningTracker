@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.presentation.R
-import com.revakovskyi.core.presentation.designsystem.LogoIcon
+import com.revakovskyi.core.presentation.designsystem.theme.LogoIcon
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
 import com.revakovskyi.core.presentation.designsystem.components.OutlinedActionButton

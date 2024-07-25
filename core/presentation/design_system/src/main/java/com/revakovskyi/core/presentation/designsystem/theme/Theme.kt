@@ -1,4 +1,4 @@
-package com.revakovskyi.core.presentation.designsystem
+package com.revakovskyi.core.presentation.designsystem.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme

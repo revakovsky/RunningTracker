@@ -1,6 +1,5 @@
 package com.revakovskyi.runningtracker.nav
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,6 +9,7 @@ import androidx.navigation.navigation
 import com.revakovskyi.auth.presentation.intro.IntroScreenRoute
 import com.revakovskyi.auth.presentation.signIn.SignInScreenRoot
 import com.revakovskyi.auth.presentation.signUp.SignUpScreenRoot
+import com.revakovskyi.run.presentation.runOverview.RunOverviewScreenRoot
 
 @Composable
 fun NavigationRoot(
@@ -84,7 +84,7 @@ private fun NavGraphBuilder.runGraph(navHostController: NavHostController) {
     navigation(startDestination = "run_overview", route = "run") {
 
         composable(route = "run_overview") {
-            Text(text = "Run overview")
+            RunOverviewScreenRoot()
         }
 
     }

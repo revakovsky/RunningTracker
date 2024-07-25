@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.revakovskyi.core.peresentation.ui.setUpImeWindowInsets
-import com.revakovskyi.core.presentation.designsystem.RunningTrackerTheme
+import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.runningtracker.nav.NavigationRoot
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

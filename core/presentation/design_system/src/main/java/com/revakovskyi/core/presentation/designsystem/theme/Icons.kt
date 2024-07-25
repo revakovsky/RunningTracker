@@ -1,8 +1,9 @@
-package com.revakovskyi.core.presentation.designsystem
+package com.revakovskyi.core.presentation.designsystem.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import com.revakovskyi.core.presentation.designsystem.R
 
 val AnalyticsIcon: ImageVector
     @Composable
