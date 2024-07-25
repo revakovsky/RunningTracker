@@ -4,6 +4,9 @@ plugins {
 
 dependencies {
 
+    // Module
+    implementation(projects.core.domain)
+
     // Kotlin
     implementation(libs.kotlinx.coroutines.core)
 
