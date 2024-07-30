@@ -9,4 +9,9 @@
     <string name="duration">Duration</string>
     <string name="distance">Distance</string>
     <string name="pace">Pace</string>
+    <string name="permission_is_required">Permission is required</string>
+    <string name="location_notification_rationale">In order to track you location and display the current time as a notification, this app needs your permission for that\nPlease, click on \"Okay\" button to grant it</string>
+    <string name="location_rationale">In order to track you location, this app needs your permission for that\nPlease, click on \"Okay\" button to grant it</string>
+    <string name="notification_rationale">In order to display the current time as a notification, this app needs your permission for that\nPlease, click on \"Okay\" button to grant it</string>
+    <string name="okay">Okay</string>
 </resources>

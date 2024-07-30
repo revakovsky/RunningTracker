@@ -2,6 +2,13 @@
 
 package com.revakovskyi.run.presentation.activeRun
 
+import android.Manifest
+import android.content.Context
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,10 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.presentation.designsystem.components.OutlinedActionButton
+import com.revakovskyi.core.presentation.designsystem.components.TrackerDialog
 import com.revakovskyi.core.presentation.designsystem.components.TrackerFloatingActionButton
 import com.revakovskyi.core.presentation.designsystem.components.TrackerScaffold
 import com.revakovskyi.core.presentation.designsystem.components.TrackerToolbar
@@ -21,6 +32,10 @@ import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.core.presentation.designsystem.theme.StartIcon
 import com.revakovskyi.core.presentation.designsystem.theme.StopIcon
 import com.revakovskyi.run.presentation.R
+import com.revakovskyi.run.presentation.util.hasLocationPermission
+import com.revakovskyi.run.presentation.util.hasNotificationPermission
+import com.revakovskyi.run.presentation.util.shouldShowLocationPermissionRationale
+import com.revakovskyi.run.presentation.util.shouldShowNotificationPermissionRationale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -41,6 +56,36 @@ private fun ActiveRunScreen(
     state: ActiveRunState,
     onAction: (action: ActiveRunAction) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        processPermissionLauncherResult(result, context, onAction)
+    }
+
+    LaunchedEffect(key1 = true) {
+        val activity = context as ComponentActivity
+        val showLocationRationale = activity.shouldShowLocationPermissionRationale()
+        val showNotificationRationale = activity.shouldShowNotificationPermissionRationale()
+
+        onAction(
+            ActiveRunAction.SubmitLocationPermission(
+                hasAcceptedLocationPermission = context.hasLocationPermission(),
+                showLocationPermissionRationale = showLocationRationale
+            )
+        )
+        onAction(
+            ActiveRunAction.SubmitNotificationPermission(
+                hasAcceptedNotificationPermission = context.hasNotificationPermission(),
+                showNotificationPermissionRationale = showNotificationRationale
+            )
+        )
+
+        if (!showLocationRationale && !showNotificationRationale) {
+            permissionLauncher.requestTrackerPermissions(context)
+        }
+    }
 
     TrackerScaffold(
         withGradient = false,
@@ -82,7 +127,81 @@ private fun ActiveRunScreen(
         }
     }
 
+    if (state.showLocationRationale || state.showNotificationRationale) {
+        TrackerDialog(
+            title = stringResource(R.string.permission_is_required),
+            description = stringResource(
+                id = when {
+                    state.showLocationRationale && state.showNotificationRationale -> R.string.location_notification_rationale
+                    state.showLocationRationale -> R.string.location_rationale
+                    else -> R.string.notification_rationale
+                }
+            ),
+            onDismiss = { /*Normal dismissing not allowed for the permissions*/ },
+            primaryButton = {
+                OutlinedActionButton(
+                    text = stringResource(R.string.okay),
+                    isLoading = false,
+                    onClick = {
+                        onAction(ActiveRunAction.DismissRationaleDialog)
+                        permissionLauncher.requestTrackerPermissions(context)
+                    }
+                )
+            }
+        )
+    }
+
 }
+
+
+private fun processPermissionLauncherResult(
+    result: Map<String, @JvmSuppressWildcards Boolean>,
+    context: Context,
+    onAction: (action: ActiveRunAction) -> Unit,
+) {
+    val hasAccessCourseLocation = result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+    val hasAccessFineLocation = result[Manifest.permission.ACCESS_FINE_LOCATION] == true
+    val hasAccessNotification = if (Build.VERSION.SDK_INT >= 33) {
+        result[Manifest.permission.POST_NOTIFICATIONS] == true
+    } else true
+
+    val activity = context as ComponentActivity
+    val showLocationRationale = activity.shouldShowNotificationPermissionRationale()
+    val showNotificationRationale = activity.shouldShowNotificationPermissionRationale()
+
+    onAction(
+        ActiveRunAction.SubmitLocationPermission(
+            hasAcceptedLocationPermission = hasAccessCourseLocation && hasAccessFineLocation,
+            showLocationPermissionRationale = showLocationRationale
+        )
+    )
+    onAction(
+        ActiveRunAction.SubmitNotificationPermission(
+            hasAcceptedNotificationPermission = hasAccessNotification,
+            showNotificationPermissionRationale = showNotificationRationale
+        )
+    )
+}
+
+private fun ActivityResultLauncher<Array<String>>.requestTrackerPermissions(context: Context) {
+    val hasLocationPermission = context.hasLocationPermission()
+    val hasNotificationPermission = context.hasNotificationPermission()
+
+    when {
+        !hasLocationPermission && !hasNotificationPermission -> launch(getLocationPermissionsArray() + getNotificationPermissionsArray())
+        !hasLocationPermission -> launch(getLocationPermissionsArray())
+        !hasNotificationPermission -> launch(getNotificationPermissionsArray())
+    }
+}
+
+private fun getLocationPermissionsArray() = arrayOf(
+    Manifest.permission.ACCESS_COARSE_LOCATION,
+    Manifest.permission.ACCESS_FINE_LOCATION,
+)
+
+private fun getNotificationPermissionsArray() =
+    if (Build.VERSION.SDK_INT >= 33) arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+    else arrayOf()
 
 
 @Preview
