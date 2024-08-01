@@ -20,4 +20,7 @@ dependencies {
     // Location
     implementation(libs.google.android.gms.play.services.location)
 
+    // Koin
+    implementation(libs.bundles.koin)
+
 }
