@@ -17,3 +17,5 @@ An app that tracks your running and displays a running route on the map
 - Work with focusable states and bringIntoButtonViewRequester
 - Android Splash screen
 - Multiple permission handling
+- Google location
+- Kotlin Flows to transfer data
