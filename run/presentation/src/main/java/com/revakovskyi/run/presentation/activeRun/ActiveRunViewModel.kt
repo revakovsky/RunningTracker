@@ -5,16 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.revakovskyi.run.domain.RunningTracker
+import com.revakovskyi.run.domain.LocationManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import timber.log.Timber
 
 class ActiveRunViewModel(
-    private val runningTracker: RunningTracker,
+    private val locationManager: LocationManager,
 ) : ViewModel() {
 
     var state by mutableStateOf(ActiveRunState())
@@ -29,16 +28,8 @@ class ActiveRunViewModel(
     init {
         _hasLocationPermission
             .onEach { hasPermission ->
-                if (hasPermission) runningTracker.startObservingLocation()
-                else runningTracker.stopObservingLocation()
-            }
-            .launchIn(viewModelScope)
-
-
-        // TEST
-        runningTracker.currentLocation
-            .onEach { locationWithAltitude ->
-                Timber.d("New location - $locationWithAltitude")
+                if (hasPermission) locationManager.startObservingLocation()
+                else locationManager.stopObservingLocation()
             }
             .launchIn(viewModelScope)
     }

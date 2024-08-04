@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RunningTracker(
+class LocationManager(
     private val locationObserver: LocationObserver,
     applicationScope: CoroutineScope,
 ) {

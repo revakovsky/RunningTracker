@@ -1,6 +1,6 @@
 package com.revakovskyi.run.presentation.di
 
-import com.revakovskyi.run.domain.RunningTracker
+import com.revakovskyi.run.domain.LocationManager
 import com.revakovskyi.run.presentation.activeRun.ActiveRunViewModel
 import com.revakovskyi.run.presentation.runOverview.RunOverviewViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -12,6 +12,6 @@ val runPresentationModule = module {
     viewModelOf(::RunOverviewViewModel)
     viewModelOf(::ActiveRunViewModel)
 
-    singleOf(::RunningTracker)
+    singleOf(::LocationManager)
 
 }
