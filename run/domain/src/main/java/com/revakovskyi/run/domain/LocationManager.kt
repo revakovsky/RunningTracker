@@ -94,7 +94,7 @@ class LocationManager(
 
     private fun updateRunData(locationTimeStamp: LocationTimeStamp) {
         _runData.update {
-            val newLocationsList = getNewLocationsWithNewLocation(locationTimeStamp)
+            val newLocationsList = getLocationsWithNewLocation(locationTimeStamp)
             val distanceMeters = LocationDataCalculator.getTotalDistanceMeters(newLocationsList)
             val distanceKm = distanceMeters / 1000.0
             val currentDuration = locationTimeStamp.durationTimeStamp
@@ -109,7 +109,7 @@ class LocationManager(
         }
     }
 
-    private fun getNewLocationsWithNewLocation(locationTimeStamp: LocationTimeStamp): List<List<LocationTimeStamp>> {
+    private fun getLocationsWithNewLocation(locationTimeStamp: LocationTimeStamp): List<List<LocationTimeStamp>> {
         val currentLocations = _runData.value.locations
 
         val lastLocationsList = if (currentLocations.isNotEmpty()) {
