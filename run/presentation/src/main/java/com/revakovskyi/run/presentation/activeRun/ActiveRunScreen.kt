@@ -32,6 +32,8 @@ import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.core.presentation.designsystem.theme.StartIcon
 import com.revakovskyi.core.presentation.designsystem.theme.StopIcon
 import com.revakovskyi.run.presentation.R
+import com.revakovskyi.run.presentation.activeRun.components.RunDataCard
+import com.revakovskyi.run.presentation.activeRun.maps.TrackerMap
 import com.revakovskyi.run.presentation.util.hasLocationPermission
 import com.revakovskyi.run.presentation.util.hasNotificationPermission
 import com.revakovskyi.run.presentation.util.shouldShowLocationPermissionRationale
@@ -114,6 +116,13 @@ private fun ActiveRunScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
+
+            TrackerMap(
+                isRunFinished = state.isRunFinished,
+                currentLocation = state.currentLocation,
+                locations = state.runData.locations,
+                onSnapshot = {},
+            )
 
             RunDataCard(
                 elapsedTime = state.elapsedTime,

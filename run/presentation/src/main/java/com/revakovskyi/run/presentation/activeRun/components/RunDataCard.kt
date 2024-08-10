@@ -1,4 +1,4 @@
-package com.revakovskyi.run.presentation.activeRun
+package com.revakovskyi.run.presentation.activeRun.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
