@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -92,12 +93,12 @@ fun TrackerMap(
                     modifier = Modifier
                         .size(35.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onPrimary),
+                        .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = RunIcon,
-                        contentDescription = "Running marker",
+                        contentDescription = stringResource(R.string.running_marker),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(20.dp)
                     )
