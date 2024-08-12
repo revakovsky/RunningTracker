@@ -83,6 +83,8 @@ fun TrackerMap(
         uiSettings = MapUiSettings(zoomControlsEnabled = false),
         modifier = modifier.fillMaxSize()
     ) {
+        TrackerPolylines(locations = locations)
+
         if (!isRunFinished && currentLocation != null) {
             MarkerComposable(
                 currentLocation,
