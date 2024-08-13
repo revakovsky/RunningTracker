@@ -69,6 +69,17 @@ class LocationManager(
 
     private fun observeElapsedTimeUpdates() {
         isTracking
+            .onEach { isTracking ->
+                if (!isTracking) {
+                    val newList = buildList {
+                        addAll(runData.value.locations)
+                        add(emptyList<LocationTimeStamp>())
+                    }.toList()
+                    _runData.update {
+                        it.copy(locations = newList)
+                    }
+                }
+            }
             .flatMapLatest { isTracking ->
                 if (isTracking) Stopwatch.timeAndEmit() else flowOf()
             }
