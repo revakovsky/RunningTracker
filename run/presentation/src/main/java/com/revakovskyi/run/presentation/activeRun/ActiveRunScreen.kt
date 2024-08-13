@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.OutlinedActionButton
 import com.revakovskyi.core.presentation.designsystem.components.TrackerDialog
 import com.revakovskyi.core.presentation.designsystem.components.TrackerFloatingActionButton
@@ -53,6 +55,7 @@ fun ActiveRunScreenRoot(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ActiveRunScreen(
     state: ActiveRunState,
@@ -134,6 +137,30 @@ private fun ActiveRunScreen(
             )
 
         }
+    }
+
+    if (!state.shouldTrack && state.hasStartedRunning) {
+        TrackerDialog(
+            title = stringResource(R.string.running_is_paused),
+            description = stringResource(R.string.resume_or_finish_the_workout),
+            onDismiss = { onAction(ActiveRunAction.OnResumeRunClick) },
+            primaryButton = {
+                ActionButton(
+                    text = stringResource(R.string.resume),
+                    isLoading = false,
+                    onClick = { onAction(ActiveRunAction.OnResumeRunClick) },
+                    modifier = Modifier.weight(1f)
+                )
+            },
+            secondaryButton = {
+                OutlinedActionButton(
+                    text = stringResource(R.string.finish),
+                    isLoading = state.isSavingRun,
+                    onClick = { onAction(ActiveRunAction.OnFinishRunClick) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        )
     }
 
     if (state.showLocationRationale || state.showNotificationRationale) {
