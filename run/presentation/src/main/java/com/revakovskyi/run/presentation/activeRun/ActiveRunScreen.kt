@@ -36,6 +36,7 @@ import com.revakovskyi.core.presentation.designsystem.theme.StopIcon
 import com.revakovskyi.run.presentation.R
 import com.revakovskyi.run.presentation.activeRun.components.RunDataCard
 import com.revakovskyi.run.presentation.activeRun.maps.TrackerMap
+import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import com.revakovskyi.run.presentation.util.hasLocationPermission
 import com.revakovskyi.run.presentation.util.hasNotificationPermission
 import com.revakovskyi.run.presentation.util.shouldShowLocationPermissionRationale
@@ -45,10 +46,12 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ActiveRunScreenRoot(
     viewModel: ActiveRunViewModel = koinViewModel(),
+    onServiceToggle: (shouldServiceRun: Boolean) -> Unit,
 ) {
 
     ActiveRunScreen(
         state = viewModel.state,
+        onServiceToggle = onServiceToggle,
         onAction = viewModel::onAction
     )
 
@@ -59,6 +62,7 @@ fun ActiveRunScreenRoot(
 @Composable
 private fun ActiveRunScreen(
     state: ActiveRunState,
+    onServiceToggle: (shouldServiceRun: Boolean) -> Unit,
     onAction: (action: ActiveRunAction) -> Unit,
 ) {
     val context = LocalContext.current
@@ -90,6 +94,16 @@ private fun ActiveRunScreen(
         if (!showLocationRationale && !showNotificationRationale) {
             permissionLauncher.requestTrackerPermissions(context)
         }
+    }
+
+    LaunchedEffect(key1 = state.shouldTrack) {
+        if (context.hasNotificationPermission() && state.shouldTrack && !ActiveRunService.isServiceActive) {
+            onServiceToggle(true)
+        }
+    }
+
+    LaunchedEffect(key1 = state.isRunFinished) {
+        if (state.isRunFinished) onServiceToggle(false)
     }
 
     TrackerScaffold(
@@ -246,6 +260,7 @@ private fun ActiveRunScreenPreview() {
     RunningTrackerTheme {
         ActiveRunScreen(
             state = ActiveRunState(),
+            onServiceToggle = {},
             onAction = {}
         )
     }

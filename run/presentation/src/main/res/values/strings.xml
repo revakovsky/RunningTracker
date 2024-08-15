@@ -19,4 +19,5 @@
     <string name="resume_or_finish_the_workout">Do you want to resume or finish the workout?</string>
     <string name="resume">Resume</string>
     <string name="finish">Finish</string>
+    <string name="no_activity_class_provided">No Activity class provided!</string>
 </resources>

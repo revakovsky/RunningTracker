@@ -36,7 +36,8 @@ class LocationManager(
 
     private val isObservingLocation = MutableStateFlow(false)
 
-    private val isTracking = MutableStateFlow(false)
+    private val _isTracking = MutableStateFlow(false)
+    val isTracking = _isTracking.asStateFlow()
 
     val currentLocation: StateFlow<LocationWithAltitude?> = isObservingLocation
         .flatMapLatest { isObservingLocation ->
@@ -56,7 +57,7 @@ class LocationManager(
     }
 
     fun setIsTracking(isTracking: Boolean) {
-        this.isTracking.value = isTracking
+        this._isTracking.value = isTracking
     }
 
     fun startObservingLocation() {
@@ -68,7 +69,7 @@ class LocationManager(
     }
 
     private fun observeElapsedTimeUpdates() {
-        isTracking
+        _isTracking
             .onEach { isTracking ->
                 if (!isTracking) {
                     val newList = buildList {
@@ -90,7 +91,7 @@ class LocationManager(
     private fun observeLocationUpdates() {
         currentLocation
             .filterNotNull()
-            .combineTransform(isTracking) { locationWithAltitude, isTracking ->
+            .combineTransform(_isTracking) { locationWithAltitude, isTracking ->
                 if (isTracking) emit(locationWithAltitude)
             }
             .zip(_elapsedTime) { locationWithAltitude, duration ->

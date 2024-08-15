@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.run.domain.LocationManager
+import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,7 +21,12 @@ class ActiveRunViewModel(
     private val locationManager: LocationManager,
 ) : ViewModel() {
 
-    var state by mutableStateOf(ActiveRunState())
+    var state by mutableStateOf(
+        ActiveRunState(
+            shouldTrack = ActiveRunService.isServiceActive && locationManager.isTracking.value,
+            hasStartedRunning = ActiveRunService.isServiceActive
+        )
+    )
         private set
 
     private var eventChannel = Channel<ActiveRunEvent>()
@@ -131,6 +137,11 @@ class ActiveRunViewModel(
 
     private fun stopTracking() {
         state = state.copy(shouldTrack = false)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        if (!ActiveRunService.isServiceActive) locationManager.stopObservingLocation()
     }
 
 }
