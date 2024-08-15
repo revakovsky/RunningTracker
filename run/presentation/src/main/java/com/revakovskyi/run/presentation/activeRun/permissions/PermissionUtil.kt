@@ -1,4 +1,4 @@
-package com.revakovskyi.run.presentation.util
+package com.revakovskyi.run.presentation.activeRun.permissions
 
 import android.Manifest
 import android.content.Context
