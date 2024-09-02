@@ -7,15 +7,16 @@ An app that tracks your running and displays a running route on the map
 - Multi-module project
 - MVI
 - Convention Gradle plugin
+- Secrets Gradle Plugin for Android
 - Koin for DI
 - Ktor HttpClient with its utility functions
 - Custom Result class to process Http requests and errors
+- Android Splash screen API
 - Authentication process
 - BasicTextField2 with state
-- Encrypted SharedPreferences
-- Bearer tokens access and refresh mechanism and stay login by using these tokens
+- Bearer tokens access and refresh mechanism
+- Encrypted SharedPreferences to save Bearer tokens to stay logged in
 - Work with focusable states and bringIntoButtonViewRequester
-- Android Splash screen
 - Multiple permission handling
 - Google Maps
 - Tracking location and drawing a running path 
