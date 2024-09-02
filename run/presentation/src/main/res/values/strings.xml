@@ -20,4 +20,11 @@
     <string name="resume">Resume</string>
     <string name="finish">Finish</string>
     <string name="no_activity_class_provided">No Activity class provided!</string>
+    <string name="run_map">Run map</string>
+    <string name="could_not_load_an_image">Couldn\'t load an image</string>
+    <string name="total_running_time">Total running time</string>
+    <string name="avg_speed">Ø Speed</string>
+    <string name="max_speed">Max Speed</string>
+    <string name="total_elevation">Total Elevation</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -89,4 +89,11 @@ val Typography = Typography(
         fontSize = 24.sp,
         color = TrackerWhite
     ),
+    titleSmall = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        color = TrackerWhite
+    ),
 )
