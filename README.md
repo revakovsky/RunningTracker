@@ -6,6 +6,7 @@ An app that tracks your running and displays a running route on the map
 
 - Multi-module project
 - MVI
+- Offline-first app
 - Convention Gradle plugin
 - Secrets Gradle Plugin for Android
 - Koin for DI
@@ -22,3 +23,4 @@ An app that tracks your running and displays a running route on the map
 - Tracking location and drawing a running path 
 - Kotlin Flows to transfer data
 - Foreground Service with a Pending intent to track the run in background and reopen a current active run screen
+- Room DB
