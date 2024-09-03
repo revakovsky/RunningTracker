@@ -4,6 +4,7 @@ import android.app.Application
 import com.revakovskyi.auth.data.di.authDataModule
 import com.revakovskyi.auth.presentation.di.authViewModelModule
 import com.revakovskyi.core.data.di.coreDataModule
+import com.revakovskyi.core.database.di.databaseModule
 import com.revakovskyi.run.location.di.locationModule
 import com.revakovskyi.run.presentation.di.runPresentationModule
 import com.revakovskyi.runningtracker.di.appModule
@@ -40,7 +41,8 @@ class RunningTracker : Application() {
                 authViewModelModule, authDataModule,
                 coreDataModule,
                 runPresentationModule,
-                locationModule
+                locationModule,
+                databaseModule,
             )
         }
     }

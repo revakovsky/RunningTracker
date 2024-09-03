@@ -14,4 +14,7 @@ dependencies {
     // MongoDb bson
     implementation(libs.org.mongodb.bson)
 
+    // Koin
+    implementation(libs.bundles.koin)
+
 }
