@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.revakovskyi.core.domain.location.Location
+import com.revakovskyi.core.domain.run.Run
+import com.revakovskyi.run.domain.LocationDataCalculator
 import com.revakovskyi.run.domain.LocationManager
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +19,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class ActiveRunViewModel(
     private val locationManager: LocationManager,
@@ -93,15 +99,20 @@ class ActiveRunViewModel(
 
     fun onAction(action: ActiveRunAction) {
         when (action) {
-            ActiveRunAction.OnDismissDialog -> Unit /*TODO*/
-            ActiveRunAction.OnFinishRunClick -> Unit /*TODO*/
+            ActiveRunAction.OnDismissDialog -> Unit
+            ActiveRunAction.OnFinishRunClick -> finishCurrentRun()
             ActiveRunAction.OnResumeRunClick -> resumeRun()
             ActiveRunAction.OnToggleRunClick -> toggleRun()
             is ActiveRunAction.SubmitLocationPermission -> submitLocationPermission(action)
             is ActiveRunAction.SubmitNotificationPermission -> submitNotificationPermission(action)
             ActiveRunAction.DismissRationaleDialog -> dismissRationaleDialog()
             ActiveRunAction.OnBackClick -> stopTracking()
+            is ActiveRunAction.OnRunProcessed -> finishRun(action.mapPictureBytes)
         }
+    }
+
+    private fun finishCurrentRun() {
+        state = state.copy(isRunFinished = true, isSavingRun = true)
     }
 
     private fun resumeRun() {
@@ -137,6 +148,31 @@ class ActiveRunViewModel(
 
     private fun stopTracking() {
         state = state.copy(shouldTrack = false)
+    }
+
+    private fun finishRun(mapPictureBytes: ByteArray) {
+        val locations = state.runData.locations
+        if (locations.isEmpty() || locations.first().size <= 1) {
+            state = state.copy(isSavingRun = false)
+            return
+        }
+        viewModelScope.launch {
+            val run = Run(
+                id = null,
+                duration = state.elapsedTime,
+                dateTimeUtc = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")),
+                distanceInMeters = state.runData.distanceMeters,
+                location = state.currentLocation ?: Location(0.0, 0.0),
+                maxSpeedKmH = LocationDataCalculator.getMaxSpeedKmh(locations),
+                totalElevationMeter = LocationDataCalculator.getTotalElevationMeter(locations),
+                mapPictureUrl = null
+            )
+
+            // TODO: save a run in the repository
+
+            locationManager.finishRun()
+            state = state.copy(isSavingRun = false)
+        }
     }
 
     override fun onCleared() {

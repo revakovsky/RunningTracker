@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
 import kotlin.math.roundToInt
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -129,6 +130,13 @@ class LocationManager(
         } else listOf(locationTimeStamp)
 
         return currentLocations.replaceLast(lastLocationsList)
+    }
+
+    fun finishRun() {
+        stopObservingLocation()
+        setIsTracking(isTracking = false)
+        _elapsedTime.value = ZERO
+        _runData.value = RunData()
     }
 
 }

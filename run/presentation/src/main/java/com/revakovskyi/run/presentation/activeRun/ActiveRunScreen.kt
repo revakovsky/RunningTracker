@@ -2,6 +2,7 @@
 
 package com.revakovskyi.run.presentation.activeRun
 
+import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,6 +41,7 @@ import com.revakovskyi.run.presentation.activeRun.permissions.shouldShowLocation
 import com.revakovskyi.run.presentation.activeRun.permissions.shouldShowNotificationPermissionRationale
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import org.koin.androidx.compose.koinViewModel
+import java.io.ByteArrayOutputStream
 
 @Composable
 fun ActiveRunScreenRoot(
@@ -134,7 +136,13 @@ private fun ActiveRunScreen(
                 isRunFinished = state.isRunFinished,
                 currentLocation = state.currentLocation,
                 locations = state.runData.locations,
-                onSnapshot = {},
+                onSnapshot = { bitmap ->
+                    val stream = ByteArrayOutputStream()
+                    stream.use {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, it)
+                    }
+                    onAction(ActiveRunAction.OnRunProcessed(stream.toByteArray()))
+                },
             )
 
             RunDataCard(
