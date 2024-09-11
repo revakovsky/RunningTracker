@@ -1,5 +1,6 @@
 package com.revakovskyi.runningtracker.nav
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
@@ -105,17 +106,27 @@ private fun NavGraphBuilder.runGraph(navHostController: NavHostController) {
             val context = LocalContext.current
 
             ActiveRunScreenRoot(
+                onFinishRun = { navHostController.navigateUp() },
                 onServiceToggle = { shouldServiceRun ->
                     when (shouldServiceRun) {
-                        true -> context.startService(
-                            ActiveRunService.createServiceStartingIntent(context, MainActivity::class.java)
-                        )
-
-                        false -> context.startService(ActiveRunService.createServiceStoppingIntent(context))
+                        true -> startRunningService(context)
+                        false -> stopRunningService(context)
                     }
                 }
             )
         }
 
     }
+}
+
+private fun startRunningService(context: Context) {
+    context.startService(
+        ActiveRunService.createServiceStartingIntent(context, MainActivity::class.java)
+    )
+}
+
+private fun stopRunningService(context: Context) {
+    context.startService(
+        ActiveRunService.createServiceStoppingIntent(context)
+    )
 }

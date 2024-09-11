@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.core.domain.location.Location
 import com.revakovskyi.core.domain.run.Run
+import com.revakovskyi.core.domain.run.RunRepository
+import com.revakovskyi.core.domain.util.Result
+import com.revakovskyi.core.peresentation.ui.asUiText
 import com.revakovskyi.run.domain.LocationDataCalculator
 import com.revakovskyi.run.domain.LocationManager
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
@@ -25,6 +28,7 @@ import java.time.ZonedDateTime
 
 class ActiveRunViewModel(
     private val locationManager: LocationManager,
+    private val runRepository: RunRepository,
 ) : ViewModel() {
 
     var state by mutableStateOf(
@@ -107,7 +111,7 @@ class ActiveRunViewModel(
             is ActiveRunAction.SubmitNotificationPermission -> submitNotificationPermission(action)
             ActiveRunAction.DismissRationaleDialog -> dismissRationaleDialog()
             ActiveRunAction.OnBackClick -> stopTracking()
-            is ActiveRunAction.OnRunProcessed -> finishRun(action.mapPictureBytes)
+            is ActiveRunAction.OnSaveCurrentRun -> saveCurrentRun(action.mapPictureBytes)
         }
     }
 
@@ -150,28 +154,43 @@ class ActiveRunViewModel(
         state = state.copy(shouldTrack = false)
     }
 
-    private fun finishRun(mapPictureBytes: ByteArray) {
-        val locations = state.runData.locations
-        if (locations.isEmpty() || locations.first().size <= 1) {
+    private fun saveCurrentRun(mapPictureBytes: ByteArray) {
+        if (isInvalidRun()) {
             state = state.copy(isSavingRun = false)
             return
         }
+
         viewModelScope.launch {
-            val run = Run(
-                id = null,
-                duration = state.elapsedTime,
-                dateTimeUtc = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")),
-                distanceInMeters = state.runData.distanceMeters,
-                location = state.currentLocation ?: Location(0.0, 0.0),
-                maxSpeedKmH = LocationDataCalculator.getMaxSpeedKmh(locations),
-                totalElevationMeter = LocationDataCalculator.getTotalElevationMeter(locations),
-                mapPictureUrl = null
-            )
-
-            // TODO: save a run in the repository
-
+            val run = finishCreatingRun()
             locationManager.finishRun()
+            handleRunSaving(run, mapPictureBytes)
             state = state.copy(isSavingRun = false)
+        }
+    }
+
+    private fun isInvalidRun(): Boolean {
+        val locations = state.runData.locations
+        return locations.isEmpty() || locations.first().size <= 1
+    }
+
+    private fun finishCreatingRun(): Run {
+        val locations = state.runData.locations
+        return Run(
+            id = null,
+            duration = state.elapsedTime,
+            dateTimeUtc = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")),
+            distanceInMeters = state.runData.distanceMeters,
+            location = state.currentLocation ?: Location(0.0, 0.0),
+            maxSpeedKmH = LocationDataCalculator.getMaxSpeedKmh(locations),
+            totalElevationMeter = LocationDataCalculator.getTotalElevationMeter(locations),
+            mapPictureUrl = null
+        )
+    }
+
+    private suspend fun handleRunSaving(run: Run, mapPictureBytes: ByteArray) {
+        when (val result = runRepository.upsertRun(run, mapPictureBytes)) {
+            is Result.Error -> eventChannel.send(ActiveRunEvent.Error(result.error.asUiText()))
+            is Result.Success -> eventChannel.send(ActiveRunEvent.RunSaved)
         }
     }
 

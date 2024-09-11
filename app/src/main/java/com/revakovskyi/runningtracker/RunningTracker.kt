@@ -6,6 +6,7 @@ import com.revakovskyi.auth.presentation.di.authViewModelModule
 import com.revakovskyi.core.data.di.coreDataModule
 import com.revakovskyi.core.database.di.databaseModule
 import com.revakovskyi.run.location.di.locationModule
+import com.revakovskyi.run.network.di.networkModule
 import com.revakovskyi.run.presentation.di.runPresentationModule
 import com.revakovskyi.runningtracker.di.appModule
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +44,7 @@ class RunningTracker : Application() {
                 runPresentationModule,
                 locationModule,
                 databaseModule,
+                networkModule,
             )
         }
     }

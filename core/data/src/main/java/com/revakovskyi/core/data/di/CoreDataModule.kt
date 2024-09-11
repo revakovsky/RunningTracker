@@ -2,7 +2,9 @@ package com.revakovskyi.core.data.di
 
 import com.revakovskyi.core.data.auth.EncryptedSessionStorage
 import com.revakovskyi.core.data.network.HttpClientFactory
+import com.revakovskyi.core.data.run.OfflineFirstRunRepository
 import com.revakovskyi.core.domain.auth.SessionStorage
+import com.revakovskyi.core.domain.run.RunRepository
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -15,5 +17,7 @@ val coreDataModule = module {
     }
 
     singleOf(::EncryptedSessionStorage).bind<SessionStorage>()
+
+    singleOf(::OfflineFirstRunRepository).bind<RunRepository>()
 
 }

@@ -2,7 +2,9 @@
 
 package com.revakovskyi.run.presentation.activeRun
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.OutlinedActionButton
 import com.revakovskyi.core.presentation.designsystem.components.TrackerDialog
@@ -46,13 +49,28 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun ActiveRunScreenRoot(
     viewModel: ActiveRunViewModel = koinViewModel(),
+    onFinishRun: () -> Unit,
     onServiceToggle: (shouldServiceRun: Boolean) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            is ActiveRunEvent.Error -> showToastError(event.error.asString(context), context)
+            ActiveRunEvent.RunSaved -> onFinishRun()
+        }
+    }
 
     ActiveRunScreen(
         state = viewModel.state,
         onServiceToggle = onServiceToggle,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                ActiveRunAction.OnBackClick -> if (!viewModel.state.hasStartedRunning) onFinishRun()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 
 }
@@ -141,7 +159,7 @@ private fun ActiveRunScreen(
                     stream.use {
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, it)
                     }
-                    onAction(ActiveRunAction.OnRunProcessed(stream.toByteArray()))
+                    onAction(ActiveRunAction.OnSaveCurrentRun(stream.toByteArray()))
                 },
             )
 
@@ -205,6 +223,10 @@ private fun ActiveRunScreen(
         )
     }
 
+}
+
+private fun showToastError(error: String, context: Context) {
+    Toast.makeText(context, error, Toast.LENGTH_LONG).show()
 }
 
 
