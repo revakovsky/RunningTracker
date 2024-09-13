@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.revakovskyi.core.database.RoomLocalRunDataSource
 import com.revakovskyi.core.database.RunDatabase
 import com.revakovskyi.core.database.dao.RunDao
+import com.revakovskyi.core.database.dao.RunPendingSyncDao
 import com.revakovskyi.core.domain.run.LocalRunDataSource
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
@@ -23,6 +24,7 @@ val databaseModule = module {
     }
 
     single<RunDao> { get<RunDatabase>().ranDao }
+    single<RunPendingSyncDao> { get<RunDatabase>().runPendingSyncDao }
 
     singleOf(::RoomLocalRunDataSource).bind<LocalRunDataSource>()
 

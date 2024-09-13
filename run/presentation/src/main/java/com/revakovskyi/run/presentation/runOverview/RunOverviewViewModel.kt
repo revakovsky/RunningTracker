@@ -34,6 +34,7 @@ class RunOverviewViewModel(
 
     private fun fetchRunsFromRemoteDb() {
         viewModelScope.launch {
+            runRepository.syncPendingRuns()
             runRepository.fetchRuns()
         }
     }
