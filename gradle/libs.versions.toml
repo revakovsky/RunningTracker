@@ -22,7 +22,7 @@ appcompat = "1.7.0"
 lifecycleRuntimeKtx = "2.8.1"
 securityCryptoKtx = "1.1.0-alpha06"
 annotation = "1.8.0"
-work = "2.9.0"
+work = "2.9.1"
 androidTools = "31.4.1"
 
 # Compose

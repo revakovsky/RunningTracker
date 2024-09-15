@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.run.domain)
     implementation(projects.core.database)
 
-    // Android
+    // Work Manager
     implementation(libs.androidx.work)
 
     // Kotlin
@@ -22,7 +22,7 @@ dependencies {
     // Location
     implementation(libs.google.android.gms.play.services.location)
 
-    // Koin
+    // Koin Work Manager
     implementation(libs.koin.android.workmanager)
 
 }
