@@ -10,6 +10,7 @@ import com.revakovskyi.core.domain.run.RemoteRunDataSource
 import com.revakovskyi.core.domain.run.Run
 import com.revakovskyi.core.domain.run.RunId
 import com.revakovskyi.core.domain.run.RunRepository
+import com.revakovskyi.core.domain.syncing.SyncRunScheduler
 import com.revakovskyi.core.domain.util.DataError
 import com.revakovskyi.core.domain.util.EmptyDataResult
 import com.revakovskyi.core.domain.util.Result
@@ -29,6 +30,7 @@ class OfflineFirstRunRepository(
     private val applicationScope: CoroutineScope,
     private val runPendingSyncDao: RunPendingSyncDao,
     private val sessionStorage: SessionStorage,
+    private val syncRunScheduler: SyncRunScheduler,
 ) : RunRepository {
 
     override fun getRuns(): Flow<List<Run>> {
@@ -55,11 +57,7 @@ class OfflineFirstRunRepository(
         val runWithId = run.copy(id = localResult.data)
 
         return when (val remoteResult = postRunToRemoteDataSource(runWithId, mapPicture)) {
-            is Result.Error -> {
-                // TODO: we didn't save our run because of the error and we should do it later!
-                Result.Success(Unit)
-            }
-
+            is Result.Error -> launchSyncSchedulerToCreateRun(run, mapPicture)
             is Result.Success -> upsertRunToLocalRunDataSource(remoteResult.data)
         }
     }
@@ -69,6 +67,18 @@ class OfflineFirstRunRepository(
         mapPicture: ByteArray,
     ): Result<Run, DataError.Network> {
         return remoteRunDataSource.postRun(run = run, mapPicture = mapPicture)
+    }
+
+    private suspend fun launchSyncSchedulerToCreateRun(
+        run: Run,
+        mapPicture: ByteArray,
+    ): Result.Success<Unit> {
+        applicationScope.launch {
+            syncRunScheduler.scheduleSync(
+                syncType = SyncRunScheduler.SyncType.CreateRun(run, mapPicture)
+            )
+        }
+        return Result.Success(Unit)
     }
 
     private suspend fun upsertRunToLocalRunDataSource(run: Run): EmptyDataResult<DataError.Local> =
@@ -82,9 +92,11 @@ class OfflineFirstRunRepository(
 
         if (checkIfRunWasNotPushedToRemoteDB(id)) return
 
-        applicationScope
+        val remoteResult = applicationScope
             .async { remoteRunDataSource.deleteRun(id) }
             .await()
+
+        if (remoteResult is Result.Error) launchSyncSchedulerToDeleteRun(id)
     }
 
     /**
@@ -98,6 +110,14 @@ class OfflineFirstRunRepository(
         } else false
     }
 
+    private suspend fun launchSyncSchedulerToDeleteRun(id: RunId) {
+        applicationScope.launch {
+            syncRunScheduler.scheduleSync(
+                syncType = SyncRunScheduler.SyncType.DeleteRun(id)
+            )
+        }.join()
+    }
+
     override suspend fun syncPendingRuns() {
         withContext(Dispatchers.IO) {
             val userId = sessionStorage.get()?.userId ?: return@withContext
@@ -105,7 +125,7 @@ class OfflineFirstRunRepository(
             val createdRuns = async { runPendingSyncDao.getAllRunPendingSyncEntities(userId) }
             val deletedRuns = async { runPendingSyncDao.getAllDeletedRunSyncEntities(userId) }
 
-            val createdJobs: List<Job> = syncPendingRunsAndGiveJobs(createdRuns)
+            val createdJobs: List<Job> = syncOnRemotePendingRunsAndGiveJobs(createdRuns)
             val deletedJobs: List<Job> = deleteOnRemoteDeletedRunsAndGiveJobs(deletedRuns)
 
             createdJobs.forEach { it.join() }
@@ -113,7 +133,7 @@ class OfflineFirstRunRepository(
         }
     }
 
-    private suspend fun CoroutineScope.syncPendingRunsAndGiveJobs(
+    private suspend fun CoroutineScope.syncOnRemotePendingRunsAndGiveJobs(
         createdRuns: Deferred<List<RunPendingSyncEntity>>,
     ): List<Job> {
         return createdRuns

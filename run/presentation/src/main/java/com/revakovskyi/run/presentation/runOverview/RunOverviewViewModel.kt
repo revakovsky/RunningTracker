@@ -6,21 +6,33 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.core.domain.run.RunRepository
+import com.revakovskyi.core.domain.syncing.SyncRunScheduler
 import com.revakovskyi.run.presentation.runOverview.mapper.toRunUi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.minutes
 
 class RunOverviewViewModel(
     private val runRepository: RunRepository,
+    private val syncRunScheduler: SyncRunScheduler,
 ) : ViewModel() {
 
     var state by mutableStateOf(RunOverviewState())
         private set
 
     init {
+        launchScheduledFetchingSync()
         getRunsFromLocalDb()
         fetchRunsFromRemoteDb()
+    }
+
+    private fun launchScheduledFetchingSync() {
+        viewModelScope.launch {
+            syncRunScheduler.scheduleSync(
+                syncType = SyncRunScheduler.SyncType.FetchRuns(interval = 30.minutes)
+            )
+        }
     }
 
     private fun getRunsFromLocalDb() {

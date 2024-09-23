@@ -1,4 +1,4 @@
-package com.revakovskyi.run.data
+package com.revakovskyi.run.data.util
 
 import androidx.work.ListenableWorker
 import com.revakovskyi.core.domain.util.DataError

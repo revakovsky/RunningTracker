@@ -1,12 +1,14 @@
-package com.revakovskyi.run.data
+package com.revakovskyi.run.data.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.revakovskyi.core.database.dao.RunPendingSyncDao
+import com.revakovskyi.core.database.mappers.toRun
 import com.revakovskyi.core.domain.run.RemoteRunDataSource
+import com.revakovskyi.run.data.util.toWorkerResult
 
-class DeleteRunWorker(
+class CreateRunWorker(
     context: Context,
     private val params: WorkerParameters,
     private val remoteRunDataSource: RemoteRunDataSource,
@@ -16,12 +18,19 @@ class DeleteRunWorker(
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) return Result.failure()
 
-        val runId = params.inputData.getString(RUN_ID) ?: return Result.failure()
+        val pendingRunId = params.inputData.getString(RUN_ID) ?: return Result.failure()
+        val pendingSyncRunEntity = pendingSyncDao.getRunPendingSyncEntity(pendingRunId) ?: return Result.failure()
+        val run = pendingSyncRunEntity.run.toRun()
 
-        return when (val result = remoteRunDataSource.deleteRun(id = runId)) {
+        val result = remoteRunDataSource.postRun(
+            run = run,
+            mapPicture = pendingSyncRunEntity.mapPicture
+        )
+
+        return when (result) {
             is com.revakovskyi.core.domain.util.Result.Error -> result.error.toWorkerResult()
             is com.revakovskyi.core.domain.util.Result.Success -> {
-                pendingSyncDao.deleteDeletedRunSyncEntity(runId)
+                pendingSyncDao.deleteRunPendingSyncEntity(pendingRunId)
                 Result.success()
             }
         }

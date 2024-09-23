@@ -1,9 +1,10 @@
-package com.revakovskyi.run.data
+package com.revakovskyi.run.data.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.revakovskyi.core.domain.run.RunRepository
+import com.revakovskyi.run.data.util.toWorkerResult
 
 class FetchRunsWorker(
     context: Context,
