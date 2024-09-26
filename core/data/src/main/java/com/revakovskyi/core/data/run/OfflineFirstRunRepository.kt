@@ -21,7 +21,6 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -65,7 +64,7 @@ class OfflineFirstRunRepository(
         val runWithId = run.copy(id = localResult.data)
 
         return when (val remoteResult = postRunToRemoteDataSource(runWithId, mapPicture)) {
-            is Result.Error -> launchSyncSchedulerToCreateRun(run, mapPicture)
+            is Result.Error -> launchSyncSchedulerToCreateRun(runWithId, mapPicture)
             is Result.Success -> upsertRunToLocalRunDataSource(remoteResult.data)
         }
     }
@@ -85,7 +84,7 @@ class OfflineFirstRunRepository(
             syncRunScheduler.scheduleSync(
                 syncType = SyncRunScheduler.SyncType.CreateRun(run, mapPicture)
             )
-        }
+        }.join()
         return Result.Success(Unit)
     }
 
@@ -133,20 +132,17 @@ class OfflineFirstRunRepository(
             val createdRuns = async { runPendingSyncDao.getAllRunPendingSyncEntities(userId) }
             val deletedRuns = async { runPendingSyncDao.getAllDeletedRunSyncEntities(userId) }
 
-            val createdJobs: List<Job> = syncOnRemotePendingRunsAndGiveJobs(createdRuns)
-            val deletedJobs: List<Job> = deleteOnRemoteDeletedRunsAndGiveJobs(deletedRuns)
+            val createdJobs: List<Job> = createdRuns
+                .await()
+                .map { createdSyncEntity -> doTheJobOfPosting(createdSyncEntity) }
+
+            val deletedJobs: List<Job> = deletedRuns
+                .await()
+                .map { deletedSyncEntity -> doTheJobOfDeleting(deletedSyncEntity) }
 
             createdJobs.forEach { it.join() }
             deletedJobs.forEach { it.join() }
         }
-    }
-
-    private suspend fun CoroutineScope.syncOnRemotePendingRunsAndGiveJobs(
-        createdRuns: Deferred<List<RunPendingSyncEntity>>,
-    ): List<Job> {
-        return createdRuns
-            .await()
-            .map { createdSyncEntity -> doTheJobOfPosting(createdSyncEntity) }
     }
 
     private fun CoroutineScope.doTheJobOfPosting(createdSyncEntity: RunPendingSyncEntity): Job =
@@ -160,20 +156,6 @@ class OfflineFirstRunRepository(
             }
         }
 
-    private suspend fun deleteCreatedRunPendingSyncEntityFromLocalDB(runId: String) {
-        applicationScope.launch {
-            runPendingSyncDao.deleteRunPendingSyncEntity(runId = runId)
-        }.join()
-    }
-
-    private suspend fun CoroutineScope.deleteOnRemoteDeletedRunsAndGiveJobs(
-        deletedRuns: Deferred<List<DeletedRunSyncEntity>>,
-    ): List<Job> {
-        return deletedRuns
-            .await()
-            .map { deletedSyncEntity -> doTheJobOfDeleting(deletedSyncEntity) }
-    }
-
     private fun CoroutineScope.doTheJobOfDeleting(deletedSyncEntity: DeletedRunSyncEntity): Job =
         launch {
             val result = remoteRunDataSource.deleteRun(deletedSyncEntity.runId)
@@ -183,6 +165,12 @@ class OfflineFirstRunRepository(
                 is Result.Success -> deleteDeletedRunSyncEntityFromLocalDB(deletedSyncEntity.runId)
             }
         }
+
+    private suspend fun deleteCreatedRunPendingSyncEntityFromLocalDB(runId: String) {
+        applicationScope.launch {
+            runPendingSyncDao.deleteRunPendingSyncEntity(runId = runId)
+        }.join()
+    }
 
     private suspend fun deleteDeletedRunSyncEntityFromLocalDB(runId: String) {
         applicationScope.launch {
