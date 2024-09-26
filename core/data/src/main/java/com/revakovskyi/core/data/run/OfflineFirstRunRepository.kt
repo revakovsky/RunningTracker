@@ -1,5 +1,6 @@
 package com.revakovskyi.core.data.run
 
+import com.revakovskyi.core.data.network.get
 import com.revakovskyi.core.database.dao.RunPendingSyncDao
 import com.revakovskyi.core.database.entity.DeletedRunSyncEntity
 import com.revakovskyi.core.database.entity.RunPendingSyncEntity
@@ -15,6 +16,10 @@ import com.revakovskyi.core.domain.util.DataError
 import com.revakovskyi.core.domain.util.EmptyDataResult
 import com.revakovskyi.core.domain.util.Result
 import com.revakovskyi.core.domain.util.asEmptyDataResult
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +29,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val LOG_OUT_END_POINT = "/logout"
+
 class OfflineFirstRunRepository(
     private val localRunDataSource: LocalRunDataSource,
     private val remoteRunDataSource: RemoteRunDataSource,
@@ -31,6 +38,7 @@ class OfflineFirstRunRepository(
     private val runPendingSyncDao: RunPendingSyncDao,
     private val sessionStorage: SessionStorage,
     private val syncRunScheduler: SyncRunScheduler,
+    private val client: HttpClient,
 ) : RunRepository {
 
     override fun getRuns(): Flow<List<Run>> {
@@ -180,6 +188,22 @@ class OfflineFirstRunRepository(
         applicationScope.launch {
             runPendingSyncDao.deleteDeletedRunSyncEntity(runId = runId)
         }.join()
+    }
+
+    override suspend fun deleteAllRuns() {
+        localRunDataSource.deleteAllRuns()
+    }
+
+    override suspend fun logOut(): EmptyDataResult<DataError.Network> {
+        val result = client.get<Unit>(route = LOG_OUT_END_POINT).asEmptyDataResult()
+
+        client
+            .plugin(Auth).providers
+            .filterIsInstance<BearerAuthProvider>()
+            .firstOrNull()
+            ?.clearToken()
+
+        return result
     }
 
 }
