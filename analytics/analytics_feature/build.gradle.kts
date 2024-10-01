@@ -14,4 +14,6 @@ dependencies {
     implementation(projects.analytics.domain)
     implementation(projects.analytics.data)
 
+    implementation(libs.androidx.navigation.compose)
+
 }

@@ -21,6 +21,7 @@ import com.revakovskyi.runningtracker.presentation.MainActivity
 fun NavigationRoot(
     navHostController: NavHostController,
     isSignedIn: Boolean,
+    onAnalyticsClick: () -> Unit,
 ) {
 
     NavHost(
@@ -29,7 +30,7 @@ fun NavigationRoot(
     ) {
 
         authGraph(navHostController)
-        runGraph(navHostController)
+        runGraph(navHostController, onAnalyticsClick)
 
     }
 
@@ -86,7 +87,10 @@ private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
 }
 
 
-private fun NavGraphBuilder.runGraph(navHostController: NavHostController) {
+private fun NavGraphBuilder.runGraph(
+    navHostController: NavHostController,
+    onAnalyticsClick: () -> Unit,
+) {
     navigation(startDestination = "run_overview", route = "run") {
 
         composable(route = "run_overview") {
@@ -98,6 +102,7 @@ private fun NavGraphBuilder.runGraph(navHostController: NavHostController) {
                         }
                     }
                 },
+                onAnalyticsClick = onAnalyticsClick,
                 onStartRunClick = {
                     navHostController.navigate("active_run")
                 }

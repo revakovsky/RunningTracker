@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Running Tracker</string>
     <string name="title_analytics_feature">Analytics</string>
+    <string name="error_could_not_load_a_module">There was an error: couldn\'t load a module!</string>
+    <string name="unfortunately_the_installation_failed">Unfortunately, the installation failed! Please, try again later</string>
+    <string name="analytics_feature_was_successfully_installed">The analytics feature was successfully installed! Feel free to use it now</string>
+    <string name="installing_module">Installing module..</string>
 </resources>

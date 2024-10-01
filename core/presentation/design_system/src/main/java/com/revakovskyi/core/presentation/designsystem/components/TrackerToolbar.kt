@@ -88,7 +88,10 @@ fun TrackerToolbar(
                                 horizontalArrangement = Arrangement.Start,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onMenuItemClick(itemIndex) }
+                                    .clickable {
+                                        onMenuItemClick(itemIndex)
+                                        isDropDownMenuOpen = false
+                                    }
                                     .padding(horizontal = 32.dp, vertical = 16.dp)
                             ) {
 

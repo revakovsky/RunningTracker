@@ -116,26 +116,31 @@ fun TrackerMap(
             if (isRunFinished && triggerCapture && createSnapshotJob == null) {
                 triggerCapture = false
 
-                val boundsBuilder = LatLngBounds.builder()
-                locations.flatten().forEach { locationTimeStamp ->
-                    boundsBuilder.include(
-                        LatLng(
-                            locationTimeStamp.locationWithAltitude.location.latitude,
-                            locationTimeStamp.locationWithAltitude.location.longitude
-                        )
-                    )
-                }
+                if (locations.flatten().isNotEmpty()) {
+                    val boundsBuilder = LatLngBounds.builder()
 
-                map.moveCamera(
-                    CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100)
-                )
-                map.setOnCameraIdleListener {
-                    createSnapshotJob?.cancel()
-                    createSnapshotJob = GlobalScope.launch {
-                        // make sure the map is sharp and focused before taking a screenshot
-                        delay(500L)
-                        map.awaitSnapshot()?.let(onSnapshot)
+                    locations.flatten().forEach { locationTimeStamp ->
+                        boundsBuilder.include(
+                            LatLng(
+                                locationTimeStamp.locationWithAltitude.location.latitude,
+                                locationTimeStamp.locationWithAltitude.location.longitude
+                            )
+                        )
                     }
+
+                    map.moveCamera(
+                        CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100)
+                    )
+                    map.setOnCameraIdleListener {
+                        createSnapshotJob?.cancel()
+                        createSnapshotJob = GlobalScope.launch {
+                            // make sure the map is sharp and focused before taking a screenshot
+                            delay(500L)
+                            map.awaitSnapshot()?.let(onSnapshot)
+                        }
+                    }
+                } else {
+                    // TODO: handle the case when we don't have any locations
                 }
             }
         }

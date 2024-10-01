@@ -3,6 +3,7 @@ package com.revakovskyi.core.presentation.designsystem.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,29 +27,38 @@ fun TrackerFloatingActionButton(
 ) {
 
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .size(75.dp)
-            .clip(CircleShape)
-            .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
-            .clickable { onClick() }
+        contentAlignment = Alignment.BottomEnd,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 48.dp)
     ) {
 
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(50.dp)
+            modifier = modifier
+                .size(75.dp)
                 .clip(CircleShape)
-                .background(color = MaterialTheme.colorScheme.primary)
-                .padding(12.dp)
+                .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                .clickable { onClick() }
         ) {
 
-            Icon(
-                imageVector = icon,
-                contentDescription = contentDescription,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(iconSize)
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(color = MaterialTheme.colorScheme.primary)
+                    .padding(12.dp)
+            ) {
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(iconSize)
+                )
+
+            }
 
         }
 

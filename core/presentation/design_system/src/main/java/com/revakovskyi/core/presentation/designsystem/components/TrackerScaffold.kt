@@ -18,7 +18,7 @@ fun TrackerScaffold(
     Scaffold(
         topBar = topAppBar,
         floatingActionButton = floatingActionButton,
-        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButtonPosition = FabPosition.End,
         modifier = modifier,
     ) { paddingValues ->
 

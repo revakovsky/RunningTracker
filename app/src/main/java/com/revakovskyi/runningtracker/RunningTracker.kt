@@ -1,6 +1,8 @@
 package com.revakovskyi.runningtracker
 
 import android.app.Application
+import android.content.Context
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.revakovskyi.auth.data.di.authDataModule
 import com.revakovskyi.auth.presentation.di.authViewModelModule
 import com.revakovskyi.core.data.di.coreDataModule
@@ -21,6 +23,11 @@ import timber.log.Timber
 class RunningTracker : Application() {
 
     val applicationScope = CoroutineScope(SupervisorJob())
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        SplitCompat.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()

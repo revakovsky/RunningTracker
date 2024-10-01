@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.revakovskyi.run.presentation.activeRun
 
 import android.content.Context
@@ -76,7 +74,7 @@ fun ActiveRunScreenRoot(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ActiveRunScreen(
     state: ActiveRunState,

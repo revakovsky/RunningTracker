@@ -40,6 +40,7 @@ import org.koin.androidx.compose.koinViewModel
 fun RunOverviewScreenRoot(
     viewModel: RunOverviewViewModel = koinViewModel(),
     onLogOutClick: () -> Unit,
+    onAnalyticsClick: () -> Unit,
     onStartRunClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -52,6 +53,7 @@ fun RunOverviewScreenRoot(
             when (action) {
                 RunOverviewAction.OnStartRunClick -> onStartRunClick()
                 RunOverviewAction.OnLogOutClick -> onLogOutClick()
+                RunOverviewAction.OnAnalyticsClick -> onAnalyticsClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -105,7 +107,7 @@ private fun RunOverviewScreen(
                 contentDescription = stringResource(R.string.start_a_new_run),
                 onClick = { onAction(RunOverviewAction.OnStartRunClick) }
             )
-        }
+        },
     ) { padding ->
 
         LazyColumn(
