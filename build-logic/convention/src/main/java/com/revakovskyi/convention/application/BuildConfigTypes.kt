@@ -3,6 +3,7 @@ package com.revakovskyi.convention.application
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.BuildType
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.DynamicFeatureExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.gradle.api.Project
@@ -26,6 +27,7 @@ internal fun Project.configureBuildTypes(
         when (extensionType) {
             ExtensionType.APPLICATION -> setUpApplicationBuildTypes(apiKey, commonExtension)
             ExtensionType.LIBRARY -> setUpLibraryBuildTypes(apiKey, commonExtension)
+            ExtensionType.DYNAMIC_FEATURE -> setUpDynamicFeatureBuildTypes(apiKey, commonExtension)
         }
     }
 }
@@ -47,6 +49,18 @@ private fun Project.setUpLibraryBuildTypes(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
     extensions.configure<LibraryExtension> {
+        buildTypes {
+            debug { configureDebugBuildType(apiKey) }
+            release { configureReleaseBuildType(commonExtension, apiKey) }
+        }
+    }
+}
+
+private fun Project.setUpDynamicFeatureBuildTypes(
+    apiKey: String,
+    commonExtension: CommonExtension<*, *, *, *, *, *>,
+) {
+    extensions.configure<DynamicFeatureExtension> {
         buildTypes {
             debug { configureDebugBuildType(apiKey) }
             release { configureReleaseBuildType(commonExtension, apiKey) }
