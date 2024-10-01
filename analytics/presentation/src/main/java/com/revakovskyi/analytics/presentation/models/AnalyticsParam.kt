@@ -1,4 +1,4 @@
-package com.revakovskyi.analytics.presentation.components
+package com.revakovskyi.analytics.presentation.models
 
 import androidx.annotation.StringRes
 

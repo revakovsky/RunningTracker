@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.analytics.presentation.components.AnalyticsCard
-import com.revakovskyi.analytics.presentation.components.AnalyticsParam
+import com.revakovskyi.analytics.presentation.models.AnalyticsParam
 import com.revakovskyi.core.presentation.designsystem.components.TrackerScaffold
 import com.revakovskyi.core.presentation.designsystem.components.TrackerToolbar
 import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
