@@ -27,7 +27,7 @@ internal fun Project.configureBuildTypes(
         when (extensionType) {
             ExtensionType.APPLICATION -> setUpApplicationBuildTypes(apiKey, commonExtension)
             ExtensionType.LIBRARY -> setUpLibraryBuildTypes(apiKey, commonExtension)
-            ExtensionType.DYNAMIC_FEATURE -> setUpDynamicFeatureBuildTypes(apiKey, commonExtension)
+            ExtensionType.DYNAMIC_FEATURE -> setUpDynamicFeatureBuildTypes(apiKey)
         }
     }
 }
@@ -56,14 +56,16 @@ private fun Project.setUpLibraryBuildTypes(
     }
 }
 
-private fun Project.setUpDynamicFeatureBuildTypes(
-    apiKey: String,
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
+private fun Project.setUpDynamicFeatureBuildTypes(apiKey: String) {
     extensions.configure<DynamicFeatureExtension> {
         buildTypes {
             debug { configureDebugBuildType(apiKey) }
-            release { configureReleaseBuildType(commonExtension, apiKey) }
+            release {
+                buildConfigField("String", API_KEY, "\"$apiKey\"")
+                buildConfigField("String", BASE_URL, "\"https://runique.pl-coding.com:8080\"")
+
+                isMinifyEnabled = false
+            }
         }
     }
 }
