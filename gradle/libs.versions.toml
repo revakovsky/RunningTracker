@@ -4,7 +4,7 @@
 projectApplicationId = "com.revakovskyi.runningtracker"
 projectCompileSdkVersion = "34"
 projectMinSdkVersion = "26"
-projectTargetSdkVersion = "34"
+projectTargetSdkVersion = "35"
 projectVersionCode = "1"
 projectVersionName = "1.0"
 
@@ -37,7 +37,7 @@ kotlinx-serialization = "1.6.3"
 coroutines = "1.8.0"
 
 # Google
-playCore = "1.10.3"
+featureDeliveryKtx = "2.1.0"
 secretsPlugin = "2.0.1"
 
 # Ktor
@@ -103,8 +103,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 
 # Google
-core = { module = "com.google.android.play:core", version.ref = "playCore" }
-core-testing = { module = "com.google.android.play:core-testing", version.ref = "playCore" }
+feature-delivery = { module = "com.google.android.play:feature-delivery-ktx", version.ref = "featureDeliveryKtx" }
 
 # Ktor
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }

@@ -18,7 +18,7 @@ import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.revakovskyi.core.peresentation.ui.setUpImeWindowInsets
 import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.runningtracker.R
-import com.revakovskyi.runningtracker.helpers.SplitInstallHelper
+import com.revakovskyi.runningtracker.utils.SplitInstallHelper
 import com.revakovskyi.runningtracker.nav.NavigationRoot
 import com.revakovskyi.runningtracker.presentation.components.AnalyticsInstallDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel

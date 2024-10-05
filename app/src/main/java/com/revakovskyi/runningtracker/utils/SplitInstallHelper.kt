@@ -1,4 +1,4 @@
-package com.revakovskyi.runningtracker.helpers
+package com.revakovskyi.runningtracker.utils
 
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallSessionState

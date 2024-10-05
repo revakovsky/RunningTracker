@@ -64,7 +64,7 @@ dependencies {
     api(libs.bundles.koin)
 
     // Google
-    api(libs.core)
+    api(libs.feature.delivery)
 
     // Coil
     implementation(libs.coil.compose)
