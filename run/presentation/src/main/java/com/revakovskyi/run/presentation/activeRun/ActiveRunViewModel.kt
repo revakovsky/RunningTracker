@@ -10,9 +10,11 @@ import com.revakovskyi.core.domain.location.Location
 import com.revakovskyi.core.domain.run.Run
 import com.revakovskyi.core.domain.run.RunRepository
 import com.revakovskyi.core.domain.util.Result
+import com.revakovskyi.core.peresentation.ui.UiText
 import com.revakovskyi.core.peresentation.ui.asUiText
 import com.revakovskyi.run.domain.LocationDataCalculator
 import com.revakovskyi.run.domain.LocationManager
+import com.revakovskyi.run.presentation.R
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -124,10 +126,20 @@ class ActiveRunViewModel(
     }
 
     private fun toggleRun() {
-        state = state.copy(
-            hasStartedRunning = true,
-            shouldTrack = !state.shouldTrack
-        )
+        if (state.currentLocation != null) {
+            state = state.copy(
+                hasStartedRunning = true,
+                shouldTrack = !state.shouldTrack
+            )
+        } else {
+            viewModelScope.launch {
+                eventChannel.send(
+                    ActiveRunEvent.Error(
+                        UiText.StringResource(R.string.turn_on_location)
+                    )
+                )
+            }
+        }
     }
 
     private fun submitLocationPermission(action: ActiveRunAction.SubmitLocationPermission) {
