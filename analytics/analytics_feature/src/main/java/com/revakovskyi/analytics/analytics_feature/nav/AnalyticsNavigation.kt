@@ -6,8 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.revakovskyi.analytics.presentation.AnalyticsScreenRoot
 
-private const val ANALYTICS_ROUT = "analytics_dashboard"
-
 @Composable
 fun AnalyticsNavigation(
     onCloseAnalytics: () -> Unit,
@@ -17,10 +15,10 @@ fun AnalyticsNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = ANALYTICS_ROUT
+        startDestination = Screens.Analytics.route
     ) {
 
-        composable(ANALYTICS_ROUT) {
+        composable(route = Screens.Analytics.route) {
             AnalyticsScreenRoot(onBackClick = onCloseAnalytics)
         }
 

@@ -27,7 +27,7 @@ androidTools = "31.4.1"
 
 # Compose
 composeCompiler = "1.5.10"
-activityCompose = "1.9.0"
+activityCompose = "1.9.2"
 composeBom = "2024.05.00"
 coilCompose = "2.6.0"
 navigationCompose = "2.7.7"

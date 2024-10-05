@@ -26,7 +26,7 @@ fun NavigationRoot(
 
     NavHost(
         navController = navHostController,
-        startDestination = if (isSignedIn) "run" else "auth"
+        startDestination = if (isSignedIn) Routes.Run.route else Routes.Auth.route
     ) {
 
         authGraph(navHostController)
@@ -37,42 +37,42 @@ fun NavigationRoot(
 }
 
 private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
-    navigation(startDestination = "intro", route = "auth") {
+    navigation(startDestination = Screens.Intro.route, route = Routes.Auth.route) {
 
-        composable(route = "intro") {
+        composable(route = Screens.Intro.route) {
             IntroScreenRoute(
-                onSignInClick = { navHostController.navigate("sign_in") },
-                onSignUpClick = { navHostController.navigate("sign_up") }
+                onSignInClick = { navHostController.navigate(Screens.SignIn.route) },
+                onSignUpClick = { navHostController.navigate(Screens.SignUp.route) }
             )
         }
 
-        composable(route = "sign_up") {
+        composable(route = Screens.SignUp.route) {
             SignUpScreenRoot(
                 onSignInClick = {
-                    navHostController.navigate("sign_in") {
-                        popUpTo("sign_up") {
+                    navHostController.navigate(Screens.SignIn.route) {
+                        popUpTo(Screens.SignUp.route) {
                             inclusive = true
                             saveState = true
                         }
                         restoreState = true
                     }
                 },
-                onSuccessfulRegistration = { navHostController.navigate("sign_in") }
+                onSuccessfulRegistration = { navHostController.navigate(Screens.SignIn.route) }
             )
         }
 
-        composable(route = "sign_in") {
+        composable(route = Screens.SignIn.route) {
             SignInScreenRoot(
                 onSuccessfulSignIn = {
-                    navHostController.navigate("run") {
-                        popUpTo("auth") {
+                    navHostController.navigate(Routes.Run.route) {
+                        popUpTo(Routes.Auth.route) {
                             inclusive = true
                         }
                     }
                 },
                 onSignUpClick = {
-                    navHostController.navigate("sign_up") {
-                        popUpTo("sign_in") {
+                    navHostController.navigate(Screens.SignUp.route) {
+                        popUpTo(Screens.SignIn.route) {
                             inclusive = true
                             saveState = true
                         }
@@ -91,26 +91,26 @@ private fun NavGraphBuilder.runGraph(
     navHostController: NavHostController,
     onAnalyticsClick: () -> Unit,
 ) {
-    navigation(startDestination = "run_overview", route = "run") {
+    navigation(startDestination = Screens.RunOverView.route, route = Routes.Run.route) {
 
-        composable(route = "run_overview") {
+        composable(route = Screens.RunOverView.route) {
             RunOverviewScreenRoot(
                 onLogOutClick = {
-                    navHostController.navigate("auth") {
-                        popUpTo("run") {
+                    navHostController.navigate(Routes.Auth.route) {
+                        popUpTo(Routes.Run.route) {
                             inclusive = true
                         }
                     }
                 },
                 onAnalyticsClick = onAnalyticsClick,
                 onStartRunClick = {
-                    navHostController.navigate("active_run")
+                    navHostController.navigate(Screens.ActiveRun.route)
                 }
             )
         }
 
         composable(
-            route = "active_run",
+            route = Screens.ActiveRun.route,
             deepLinks = listOf(
                 navDeepLink { uriPattern = ActiveRunService.DEEP_LINK }
             )
