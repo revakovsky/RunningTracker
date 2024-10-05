@@ -134,6 +134,7 @@ private fun ActiveRunScreen(
                 icon = if (state.shouldTrack) StopIcon else StartIcon,
                 onClick = { onAction(ActiveRunAction.OnToggleRunClick) },
                 iconSize = 20.dp,
+                shouldChangeColor = state.shouldTrack,
                 contentDescription = stringResource(
                     if (state.shouldTrack) R.string.pause_a_run
                     else R.string.start_a_new_run
