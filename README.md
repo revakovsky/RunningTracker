@@ -26,3 +26,4 @@ An app that tracks user runs and displays them with a running route on the map
 - Room DB
 - Work Manager to sync data
 - Implementing a dynamic loaded Analytics module in the app
+- Availability and support of the Wear OS app
