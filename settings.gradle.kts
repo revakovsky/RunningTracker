@@ -49,3 +49,8 @@ include(":analytics:analytics_feature")
 include(":analytics:presentation")
 include(":analytics:domain")
 include(":analytics:data")
+
+include(":wearable:app")
+include(":wearable:run:presentation")
+include(":wearable:run:domain")
+include(":wearable:run:data")

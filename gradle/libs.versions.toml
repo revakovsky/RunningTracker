@@ -4,6 +4,7 @@
 projectApplicationId = "com.revakovskyi.runningtracker"
 projectCompileSdkVersion = "34"
 projectMinSdkVersion = "26"
+wearMinSdk = "30"
 projectTargetSdkVersion = "35"
 projectVersionCode = "1"
 projectVersionName = "1.0"
@@ -66,6 +67,13 @@ bson = "4.11.1"
 
 # Timber
 timber = "5.0.1"
+
+# Wearable
+composeWearOs = "1.3.1"
+composeMaterialWearOs = "1.0.0-alpha20"
+health = "1.0.0-rc02"
+play-services-wearable = "18.1.0"
+wear = "1.3.0"
 
 # __________________________________________________________________________________________________
 
@@ -147,6 +155,14 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
+# Wearable
+androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "composeMaterialWearOs" }
+androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeWearOs" }
+androidx-wear-compose-ui-tooling = { group = "androidx.wear.compose", name = "compose-ui-tooling", version.ref = "composeWearOs" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "play-services-wearable" }
+androidx-health-services-client = { group = "androidx.health", name = "health-services-client", version.ref = "health" }
+androidx-wear = { group = "androidx.wear", name = "wear", version.ref = "wear" }
+
 # __________________________________________________________________________________________________
 
 
@@ -179,6 +195,7 @@ runningtracker-android-room = { id = "runningtracker.android.room", version = "u
 runningtracker-android-dynamic-feature = { id = "runningtracker.android.dynamic.feature", version = "unspecified" }
 runningtracker-jvm-library = { id = "runningtracker.jvm.library", version = "unspecified" }
 runningtracker-jvm-ktor = { id = "runningtracker.jvm.ktor", version = "unspecified" }
+runningtracker-android-application-wear-compose = { id = "runningtracker.android.application.wear.compose", version = "unspecified" }
 
 # __________________________________________________________________________________________________
 

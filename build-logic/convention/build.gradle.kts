@@ -52,5 +52,10 @@ gradlePlugin {
             id = "runningtracker.jvm.ktor"
             implementationClass = "JvmKtorConventionPlugin"
         }
+
+        register("androidApplicationWearCompose") {
+            id = "runningtracker.android.application.wear.compose"
+            implementationClass = "AndroidApplicationWearComposeConventionPlugin"
+        }
     }
 }
