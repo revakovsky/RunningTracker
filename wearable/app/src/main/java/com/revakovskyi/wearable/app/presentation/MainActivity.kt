@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import com.revakovskyi.wearable.app.presentation.theme.RunningTrackerTheme
+import com.revakovskyi.core.presentation.design_system_wear.RunningTrackerWearTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -19,10 +20,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            RunningTrackerTheme {
+            RunningTrackerWearTheme {
 
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "TEST TEXT", style = MaterialTheme.typography.bodyMedium)
+
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(text = "Hello, World!")
+                    }
+
                 }
 
             }

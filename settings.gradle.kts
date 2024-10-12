@@ -34,6 +34,7 @@ include(":auth:domain")
 include(":auth:data")
 
 include(":core:presentation:design_system")
+include(":core:presentation:design_system_wear")
 include(":core:presentation:ui")
 include(":core:domain")
 include(":core:data")
