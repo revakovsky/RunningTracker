@@ -42,3 +42,7 @@ fun Duration.toFormattedPace(distanceKm: Double): String {
         "$averagePacePerMinute:$averagePavePerSeconds / km"
     }
 }
+
+fun Int?.toFormattedHeartRate(): String {
+    return if (this != null) "$this bpm" else "-"
+}

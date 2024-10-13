@@ -13,6 +13,7 @@ android {
 dependencies {
 
     implementation(projects.core.presentation.designSystemWear)
+    implementation(projects.core.presentation.ui)
 
     // Android
     implementation(libs.androidx.core.ktx)
@@ -23,7 +24,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
 
     // Koin
     api(libs.bundles.koin.compose)
