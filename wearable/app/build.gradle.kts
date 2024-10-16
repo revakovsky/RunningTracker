@@ -10,6 +10,7 @@ dependencies {
 
     implementation(projects.core.presentation.designSystemWear)
     implementation(projects.wearable.run.presentation)
+    implementation(projects.wearable.run.data)
 
     // Android
     implementation(libs.androidx.core.ktx)

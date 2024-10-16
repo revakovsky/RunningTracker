@@ -12,7 +12,10 @@ android {
 
 dependencies {
 
-    // Android
+    implementation(projects.wearable.run.domain)
+    implementation(projects.core.domain)
+
+    // Android Health services
     implementation(libs.androidx.health.services.client)
 
     // Koin
