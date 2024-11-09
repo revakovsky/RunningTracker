@@ -14,6 +14,8 @@ dependencies {
 
     implementation(projects.core.presentation.designSystemWear)
     implementation(projects.core.presentation.ui)
+    implementation(projects.core.domain)
+    implementation(projects.wearable.run.domain)
 
     // Android
     implementation(libs.androidx.core.ktx)
