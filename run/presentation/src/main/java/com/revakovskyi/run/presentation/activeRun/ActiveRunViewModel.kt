@@ -14,12 +14,14 @@ import com.revakovskyi.core.peresentation.ui.UiText
 import com.revakovskyi.core.peresentation.ui.asUiText
 import com.revakovskyi.run.domain.LocationDataCalculator
 import com.revakovskyi.run.domain.LocationManager
+import com.revakovskyi.run.domain.wear.WatchConnector
 import com.revakovskyi.run.presentation.R
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -31,6 +33,7 @@ import java.time.ZonedDateTime
 class ActiveRunViewModel(
     private val locationManager: LocationManager,
     private val runRepository: RunRepository,
+    private val watchConnector: WatchConnector,
 ) : ViewModel() {
 
     var state by mutableStateOf(
@@ -57,11 +60,22 @@ class ActiveRunViewModel(
 
 
     init {
+        observeConnectedWatch()
         observeLocationPermission()
         observeTrackingStatus()
         observeLocationUpdates()
         observeRunDataUpdates()
         observeElapsedTimeUpdates()
+    }
+
+    private fun observeConnectedWatch() {
+        watchConnector
+            .connectedDevice
+            .filterNotNull()
+            .onEach { deviceNode ->
+                // TODO:
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeLocationPermission() {

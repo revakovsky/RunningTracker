@@ -55,3 +55,6 @@ include(":wearable:app")
 include(":wearable:run:presentation")
 include(":wearable:run:domain")
 include(":wearable:run:data")
+
+include(":core:connectivity:data")
+include(":core:connectivity:domain")

@@ -12,10 +12,12 @@ android {
 
 dependencies {
 
+    // Other modules
     implementation(projects.core.presentation.designSystemWear)
     implementation(projects.core.presentation.ui)
     implementation(projects.core.domain)
     implementation(projects.wearable.run.domain)
+    implementation(projects.core.connectivity.domain)
 
     // Android
     implementation(libs.androidx.core.ktx)

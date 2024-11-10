@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.revakovskyi.auth.data.di.authDataModule
 import com.revakovskyi.auth.presentation.di.authViewModelModule
+import com.revakovskyi.core.connectivity.data.di.coreConnectivityDataModule
 import com.revakovskyi.core.data.di.coreDataModule
 import com.revakovskyi.core.database.di.databaseModule
 import com.revakovskyi.run.data.di.runDataModule
@@ -57,6 +58,7 @@ class RunningTracker : Application() {
                 databaseModule,
                 networkModule,
                 runDataModule,
+                coreConnectivityDataModule,
             )
         }
     }

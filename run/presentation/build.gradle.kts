@@ -9,8 +9,10 @@ android {
 
 dependencies {
 
+    // Other modules
     implementation(projects.core.domain)
     implementation(projects.run.domain)
+    implementation(projects.core.connectivity.domain)
 
     // Compose
     implementation(libs.androidx.activity.compose)

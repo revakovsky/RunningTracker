@@ -12,8 +12,10 @@ android {
 
 dependencies {
 
+    // Other modules
     implementation(projects.wearable.run.domain)
     implementation(projects.core.domain)
+    implementation(projects.core.connectivity.domain)
 
     // Android Health services
     implementation(libs.androidx.health.services.client)

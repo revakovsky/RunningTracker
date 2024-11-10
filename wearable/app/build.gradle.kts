@@ -8,9 +8,13 @@ android {
 
 dependencies {
 
+    // Other modules
     implementation(projects.core.presentation.designSystemWear)
     implementation(projects.wearable.run.presentation)
     implementation(projects.wearable.run.data)
+
+    implementation(projects.core.connectivity.domain)
+    implementation(projects.core.connectivity.data)
 
     // Android
     implementation(libs.androidx.core.ktx)

@@ -6,13 +6,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.wear.run.domain.ExerciseTracker
+import com.revakovskyi.wear.run.domain.phone.PhoneConnector
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class TrackerViewModel(
     private val exerciseTracker: ExerciseTracker,
+    private val phoneConnector: PhoneConnector,
 ) : ViewModel() {
 
     var state by mutableStateOf(TrackerState())
@@ -22,6 +27,22 @@ class TrackerViewModel(
     val events = eventChannel.receiveAsFlow()
 
     private val hasBodySensorPermission = MutableStateFlow(false)
+
+
+    init {
+        observeConnectedPhone()
+    }
+
+    private fun observeConnectedPhone() {
+        phoneConnector
+            .connectedDevice
+            .filterNotNull()
+            .onEach { deviceNode ->
+                state = state.copy(isConnectedPhoneNearby = deviceNode.isNearby)
+            }
+            .launchIn(viewModelScope)
+    }
+
 
     fun onAction(action: TrackerAction) {
         when (action) {

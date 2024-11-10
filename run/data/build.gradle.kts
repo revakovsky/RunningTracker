@@ -11,6 +11,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.run.domain)
     implementation(projects.core.database)
+    implementation(projects.core.connectivity.domain)
 
     // Work Manager
     implementation(libs.androidx.work)

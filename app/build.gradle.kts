@@ -31,6 +31,9 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.database)
 
+    implementation(projects.core.connectivity.domain)
+    implementation(projects.core.connectivity.data)
+
     implementation(projects.auth.presentation)
     implementation(projects.auth.domain)
     implementation(projects.auth.data)
