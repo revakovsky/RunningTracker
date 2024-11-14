@@ -28,3 +28,4 @@ An app that tracks user runs and displays them with a running route on the map
 - Implementing a dynamic loaded Analytics module in the app
 - Availability and support of the Wear OS app
 - Discovering paired devices (phone and watch)
+- Share info and actions between paired devices by using Wearable Messaging Client
