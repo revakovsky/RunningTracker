@@ -14,7 +14,7 @@ import com.revakovskyi.core.peresentation.ui.UiText
 import com.revakovskyi.core.peresentation.ui.asUiText
 import com.revakovskyi.run.domain.LocationDataCalculator
 import com.revakovskyi.run.domain.LocationManager
-import com.revakovskyi.run.domain.wear.WatchConnector
+import com.revakovskyi.run.domain.wear.ConnectorToWatch
 import com.revakovskyi.run.presentation.R
 import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import kotlinx.coroutines.channels.Channel
@@ -33,7 +33,7 @@ import java.time.ZonedDateTime
 class ActiveRunViewModel(
     private val locationManager: LocationManager,
     private val runRepository: RunRepository,
-    private val watchConnector: WatchConnector,
+    private val connectorToWatch: ConnectorToWatch,
 ) : ViewModel() {
 
     var state by mutableStateOf(
@@ -69,7 +69,7 @@ class ActiveRunViewModel(
     }
 
     private fun observeConnectedWatch() {
-        watchConnector
+        connectorToWatch
             .connectedDevice
             .filterNotNull()
             .onEach { deviceNode ->

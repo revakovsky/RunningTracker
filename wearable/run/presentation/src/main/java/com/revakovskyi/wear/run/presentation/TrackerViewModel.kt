@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.wear.run.domain.ExerciseTracker
-import com.revakovskyi.wear.run.domain.phone.PhoneConnector
+import com.revakovskyi.wear.run.domain.phone.ConnectorToPhone
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class TrackerViewModel(
     private val exerciseTracker: ExerciseTracker,
-    private val phoneConnector: PhoneConnector,
+    private val connectorToPhone: ConnectorToPhone,
 ) : ViewModel() {
 
     var state by mutableStateOf(TrackerState())
@@ -34,7 +34,7 @@ class TrackerViewModel(
     }
 
     private fun observeConnectedPhone() {
-        phoneConnector
+        connectorToPhone
             .connectedDevice
             .filterNotNull()
             .onEach { deviceNode ->
