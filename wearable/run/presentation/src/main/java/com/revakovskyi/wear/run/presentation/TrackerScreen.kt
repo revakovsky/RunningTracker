@@ -33,7 +33,9 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
+import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.formatted
+import com.revakovskyi.core.peresentation.ui.showToastError
 import com.revakovskyi.core.peresentation.ui.toFormattedHeartRate
 import com.revakovskyi.core.peresentation.ui.toFormattedKm
 import com.revakovskyi.core.presentation.design_system_wear.RunningTrackerWearTheme
@@ -47,6 +49,14 @@ import org.koin.androidx.compose.koinViewModel
 fun TrackerScreenRoot(
     viewModel: TrackerViewModel = koinViewModel(),
 ) {
+    val context = LocalContext.current
+
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            is TrackerEvents.Error -> showToastError(event.message.asString(context), context)
+            TrackerEvents.RunFinished -> Unit
+        }
+    }
 
     TrackerScreen(
         state = viewModel.state,
@@ -154,7 +164,7 @@ private fun TrackedRunningDetailsRow(state: TrackerState) {
 
         TrackerDataCard(
             title = stringResource(R.string.heart_rate),
-            value = if (state.canTrackHeartRate) state.heartTate.toFormattedHeartRate()
+            value = if (state.canTrackHeartRate) state.heartRate.toFormattedHeartRate()
                     else stringResource(R.string.unsupported),
             textColor = if (state.canTrackHeartRate) MaterialTheme.colorScheme.onSurface
                         else MaterialTheme.colorScheme.error,
@@ -272,7 +282,7 @@ private fun TrackerScreenPreview() {
                 hasStartedRunning = true,
                 distanceMeters = 10_150,
                 canTrackHeartRate = true,
-                heartTate = 120
+                heartRate = 120
             ),
             onAction = {}
         )

@@ -1,8 +1,6 @@
 package com.revakovskyi.run.presentation.activeRun
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
+import com.revakovskyi.core.peresentation.ui.showToastError
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.OutlinedActionButton
 import com.revakovskyi.core.presentation.designsystem.components.TrackerDialog
@@ -222,10 +221,6 @@ private fun ActiveRunScreen(
         )
     }
 
-}
-
-private fun showToastError(error: String, context: Context) {
-    Toast.makeText(context, error, Toast.LENGTH_LONG).show()
 }
 
 
