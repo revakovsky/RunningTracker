@@ -44,5 +44,5 @@ fun Duration.toFormattedPace(distanceKm: Double): String {
 }
 
 fun Int?.toFormattedHeartRate(): String {
-    return if (this != null) "$this bpm" else "-"
+    return if (this != null) "$this bpm" else "—"
 }

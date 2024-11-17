@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.revakovskyi.core.peresentation.ui.formatted
+import com.revakovskyi.core.peresentation.ui.toFormattedHeartRate
 import com.revakovskyi.core.peresentation.ui.toFormattedKm
 import com.revakovskyi.core.peresentation.ui.toFormattedPace
 import com.revakovskyi.core.presentation.designsystem.theme.TrackerWhite
@@ -61,6 +62,12 @@ fun RunDataCard(
             RunDataItem(
                 title = stringResource(R.string.distance),
                 value = distanceKm.toFormattedKm(),
+                modifier = Modifier.defaultMinSize(minWidth = 75.dp)
+            )
+
+            RunDataItem(
+                title = stringResource(R.string.heart_rate),
+                value = runData.heartRates.lastOrNull().toFormattedHeartRate(),
                 modifier = Modifier.defaultMinSize(minWidth = 75.dp)
             )
 

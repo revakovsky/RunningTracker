@@ -18,6 +18,8 @@ fun RunEntity.toRun(): Run {
         maxSpeedKmH = maxSpeedKmh,
         totalElevationMeter = totalElevationMeters,
         mapPictureUrl = mapPictureUrl,
+        avgHeartRate = avgHeartRate,
+        maxHeartRate = maxHeartRate,
     )
 }
 
@@ -34,5 +36,7 @@ fun Run.toEntity(): RunEntity {
         maxSpeedKmh = maxSpeedKmH,
         totalElevationMeters = totalElevationMeter,
         mapPictureUrl = mapPictureUrl,
+        avgHeartRate = avgHeartRate,
+        maxHeartRate = maxHeartRate,
     )
 }

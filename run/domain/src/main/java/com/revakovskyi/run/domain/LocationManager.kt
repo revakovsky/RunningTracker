@@ -1,20 +1,27 @@
 package com.revakovskyi.run.domain
 
+import com.revakovskyi.core.connectivity.domain.messaging.MessagingAction
 import com.revakovskyi.core.domain.location.LocationTimeStamp
 import com.revakovskyi.core.domain.location.LocationWithAltitude
 import com.revakovskyi.core.domain.stopwatch.Stopwatch
+import com.revakovskyi.run.domain.wear.ConnectorToWatch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.zip
@@ -27,6 +34,7 @@ import kotlin.time.Duration.Companion.seconds
 class LocationManager(
     private val locationObserver: LocationObserver,
     private val applicationScope: CoroutineScope,
+    private val connectorToWatch: ConnectorToWatch,
 ) {
 
     private val _runData = MutableStateFlow(RunData())
@@ -51,10 +59,28 @@ class LocationManager(
             null
         )
 
+    private val heartRates = isTracking
+        .flatMapLatest { isTracking ->
+            if (isTracking) connectorToWatch.messagingActions
+            else flowOf()
+        }
+        .filterIsInstance<MessagingAction.HeartRateUpdate>()
+        .map { it.heartRate }
+        .runningFold(initial = emptyList<Int>()) { currentHeartRates, newHeartRate ->
+            currentHeartRates + newHeartRate
+        }
+        .stateIn(
+            scope = applicationScope,
+            started = SharingStarted.Lazily,
+            initialValue = emptyList()
+        )
+
 
     init {
         observeElapsedTimeUpdates()
         observeLocationUpdates()
+        sendToWatchElapsedTimeUpdates()
+        sendToWatchDistanceUpdates()
     }
 
     fun setIsTracking(isTracking: Boolean) {
@@ -63,10 +89,12 @@ class LocationManager(
 
     fun startObservingLocation() {
         isObservingLocation.value = true
+        connectorToWatch.setIsTrackable(isTrackable = true)
     }
 
     fun stopObservingLocation() {
         isObservingLocation.value = false
+        connectorToWatch.setIsTrackable(isTrackable = false)
     }
 
     private fun observeElapsedTimeUpdates() {
@@ -101,11 +129,13 @@ class LocationManager(
                     durationTimeStamp = duration
                 )
             }
-            .onEach { locationTimeStamp -> updateRunData(locationTimeStamp) }
+            .combine(heartRates) { locationTimeStamp, heartRates ->
+                updateRunData(locationTimeStamp, heartRates)
+            }
             .launchIn(applicationScope)
     }
 
-    private fun updateRunData(locationTimeStamp: LocationTimeStamp) {
+    private fun updateRunData(locationTimeStamp: LocationTimeStamp, heartRates: List<Int>) {
         _runData.update {
             val newLocationsList = getLocationsWithNewLocation(locationTimeStamp)
             val distanceMeters = LocationDataCalculator.getTotalDistanceMeters(newLocationsList)
@@ -118,6 +148,7 @@ class LocationManager(
                 distanceMeters = distanceMeters,
                 pace = avgSecondPerKm.seconds,
                 locations = newLocationsList,
+                heartRates = heartRates,
             )
         }
     }
@@ -130,6 +161,20 @@ class LocationManager(
         } else listOf(locationTimeStamp)
 
         return currentLocations.replaceLast(lastLocationsList)
+    }
+
+    private fun sendToWatchElapsedTimeUpdates() {
+        elapsedTime
+            .onEach { connectorToWatch.sendActionToWatch(MessagingAction.TimeUpdate(it)) }
+            .launchIn(applicationScope)
+    }
+
+    private fun sendToWatchDistanceUpdates() {
+        runData
+            .map { it.distanceMeters }
+            .distinctUntilChanged()
+            .onEach { connectorToWatch.sendActionToWatch(MessagingAction.DistanceUpdate(it)) }
+            .launchIn(applicationScope)
     }
 
     fun finishRun() {

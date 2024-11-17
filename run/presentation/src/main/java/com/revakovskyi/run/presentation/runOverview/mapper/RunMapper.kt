@@ -2,6 +2,7 @@ package com.revakovskyi.run.presentation.runOverview.mapper
 
 import com.revakovskyi.core.domain.run.Run
 import com.revakovskyi.core.peresentation.ui.formatted
+import com.revakovskyi.core.peresentation.ui.toFormattedHeartRate
 import com.revakovskyi.core.peresentation.ui.toFormattedKm
 import com.revakovskyi.core.peresentation.ui.toFormattedKmH
 import com.revakovskyi.core.peresentation.ui.toFormattedMeters
@@ -26,6 +27,8 @@ fun Run.toRunUi(): RunUi {
         maxSpeed = maxSpeedKmH.toFormattedKmH(),
         pace = duration.toFormattedPace(distanceKm),
         totalElevation = totalElevationMeter.toFormattedMeters(),
-        mapPictureUrl = mapPictureUrl
+        mapPictureUrl = mapPictureUrl,
+        avgHeartRate = avgHeartRate.toFormattedHeartRate(),
+        maxHeartRate = maxHeartRate.toFormattedHeartRate(),
     )
 }

@@ -52,6 +52,14 @@ fun DataGridSection(
             paramName = stringResource(id = R.string.total_elevation),
             value = runUi.totalElevation
         ),
+        RunDataUi(
+            paramName = stringResource(id = R.string.avg_heart_rate),
+            value = runUi.avgHeartRate
+        ),
+        RunDataUi(
+            paramName = stringResource(id = R.string.max_heart_rate),
+            value = runUi.maxHeartRate
+        ),
     )
 
     var maxWidth by remember { mutableIntStateOf(0) }

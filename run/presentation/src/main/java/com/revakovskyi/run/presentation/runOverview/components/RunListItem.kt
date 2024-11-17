@@ -21,9 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.domain.location.Location
+import com.revakovskyi.core.domain.run.Run
+import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.run.presentation.R
+import com.revakovskyi.run.presentation.runOverview.mapper.toRunUi
 import com.revakovskyi.run.presentation.runOverview.models.RunUi
+import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -82,4 +90,27 @@ fun RunListItem(
 
     }
 
+}
+
+
+@Preview
+@Composable
+private fun RunListItemPreview() {
+    RunningTrackerTheme {
+        RunListItem(
+            runUi = Run(
+                id = "123",
+                duration = 10.minutes + 30.seconds,
+                dateTimeUtc = ZonedDateTime.now(),
+                distanceInMeters = 2543,
+                location = Location(0.0, 0.0),
+                maxSpeedKmH = 15.6234,
+                totalElevationMeter = 123,
+                mapPictureUrl = null,
+                avgHeartRate = 120,
+                maxHeartRate = 150
+            ).toRunUi(),
+            onDeleteClick = { /*TODO*/ }
+        )
+    }
 }

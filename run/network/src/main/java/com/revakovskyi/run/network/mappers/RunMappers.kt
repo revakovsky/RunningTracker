@@ -18,6 +18,8 @@ fun RunDto.toRun(): Run {
         maxSpeedKmH = maxSpeedKmh,
         totalElevationMeter = totalElevationMeters,
         mapPictureUrl = mapPictureUrl,
+        avgHeartRate = avgHeartRate,
+        maxHeartRate = maxHeartRate,
     )
 }
 
@@ -32,5 +34,7 @@ fun Run.toRunRequest(): RunRequest {
         avgSpeedKmh = avgSpeedKmH,
         maxSpeedKmh = maxSpeedKmH,
         totalElevationMeters = totalElevationMeter,
+        avgHeartRate = avgHeartRate,
+        maxHeartRate = maxHeartRate,
     )
 }
