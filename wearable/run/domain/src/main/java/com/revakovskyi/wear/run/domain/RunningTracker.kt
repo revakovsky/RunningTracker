@@ -29,7 +29,7 @@ class RunningTracker(
     val heartRate = _heartRate.asStateFlow()
 
     private val _isTracking = MutableStateFlow(false)
-    private val isTracking = _isTracking.asStateFlow()
+    val isTracking = _isTracking.asStateFlow()
 
     private val _isTrackable = MutableStateFlow(false)
     val isTrackable = _isTrackable.asStateFlow()

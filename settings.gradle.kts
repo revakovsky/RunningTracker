@@ -39,6 +39,7 @@ include(":core:presentation:ui")
 include(":core:domain")
 include(":core:data")
 include(":core:database")
+include(":core:notification")
 
 include(":run:presentation")
 include(":run:domain")

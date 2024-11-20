@@ -22,17 +22,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.ui.tooling.preview.WearPreviewDevices
+import com.revakovskyi.core.notification.ActiveRunService
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.formatted
 import com.revakovskyi.core.peresentation.ui.showToastError
@@ -48,13 +51,21 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun TrackerScreenRoot(
     viewModel: TrackerViewModel = koinViewModel(),
+    onServiceToggle: (shouldServiceRun: Boolean) -> Unit,
 ) {
     val context = LocalContext.current
+    val state = viewModel.state
+
+    val isServiceActive by ActiveRunService.isServiceActive.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.isRunActive, state.hasStartedRunning, isServiceActive) {
+        if (state.isRunActive && !isServiceActive) onServiceToggle(true)
+    }
 
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             is TrackerEvents.Error -> showToastError(event.message.asString(context), context)
-            TrackerEvents.RunFinished -> Unit
+            TrackerEvents.RunFinished -> onServiceToggle(false)
         }
     }
 

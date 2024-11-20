@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.wearable.run.domain)
     implementation(projects.core.connectivity.domain)
+    implementation(projects.core.notification)
 
     // Android
     implementation(libs.androidx.core.ktx)

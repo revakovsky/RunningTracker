@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.revakovskyi.core.connectivity.domain.messaging.MessagingAction
 import com.revakovskyi.core.domain.util.EmptyDataResult
 import com.revakovskyi.core.domain.util.Result
+import com.revakovskyi.core.notification.ActiveRunService
 import com.revakovskyi.wear.run.domain.ExerciseError
 import com.revakovskyi.wear.run.domain.ExerciseTracker
 import com.revakovskyi.wear.run.domain.RunningTracker
@@ -33,7 +34,13 @@ class TrackerViewModel(
     private val runningTracker: RunningTracker,
 ) : ViewModel() {
 
-    var state by mutableStateOf(TrackerState())
+    var state by mutableStateOf(
+        TrackerState(
+            hasStartedRunning = ActiveRunService.isServiceActive.value,
+            isRunActive = ActiveRunService.isServiceActive.value && runningTracker.isTracking.value,
+            isTrackable = ActiveRunService.isServiceActive.value,
+        )
+    )
         private set
 
     private var _events = Channel<TrackerEvents>()

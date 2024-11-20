@@ -14,4 +14,8 @@ val runPresentationModule = module {
 
     singleOf(::LocationManager)
 
+    single {
+        get<LocationManager>().elapsedTime
+    }
+
 }

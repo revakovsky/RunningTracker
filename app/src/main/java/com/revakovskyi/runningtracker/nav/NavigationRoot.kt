@@ -12,8 +12,8 @@ import androidx.navigation.navigation
 import com.revakovskyi.auth.presentation.intro.IntroScreenRoute
 import com.revakovskyi.auth.presentation.signIn.SignInScreenRoot
 import com.revakovskyi.auth.presentation.signUp.SignUpScreenRoot
+import com.revakovskyi.core.notification.ActiveRunService
 import com.revakovskyi.run.presentation.activeRun.ActiveRunScreenRoot
-import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import com.revakovskyi.run.presentation.runOverview.RunOverviewScreenRoot
 import com.revakovskyi.runningtracker.presentation.MainActivity
 

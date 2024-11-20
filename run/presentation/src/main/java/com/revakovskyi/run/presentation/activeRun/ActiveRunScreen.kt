@@ -14,11 +14,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.revakovskyi.core.notification.ActiveRunService
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.showToastError
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
@@ -39,7 +42,6 @@ import com.revakovskyi.run.presentation.activeRun.permissions.processPermissionL
 import com.revakovskyi.run.presentation.activeRun.permissions.requestTrackerPermissions
 import com.revakovskyi.run.presentation.activeRun.permissions.shouldShowLocationPermissionRationale
 import com.revakovskyi.run.presentation.activeRun.permissions.shouldShowNotificationPermissionRationale
-import com.revakovskyi.run.presentation.activeRun.service.ActiveRunService
 import org.koin.androidx.compose.koinViewModel
 import java.io.ByteArrayOutputStream
 
@@ -82,6 +84,8 @@ private fun ActiveRunScreen(
 ) {
     val context = LocalContext.current
 
+    val isServiceActive by ActiveRunService.isServiceActive.collectAsStateWithLifecycle()
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { result -> processPermissionLauncherResult(result, context, onAction) }
@@ -109,8 +113,8 @@ private fun ActiveRunScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.shouldTrack) {
-        if (context.hasNotificationPermission() && state.shouldTrack && !ActiveRunService.isServiceActive) {
+    LaunchedEffect(state.shouldTrack, isServiceActive) {
+        if (context.hasNotificationPermission() && state.shouldTrack && !isServiceActive) {
             onServiceToggle(true)
         }
     }

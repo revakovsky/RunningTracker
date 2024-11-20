@@ -11,7 +11,7 @@
     <application>
 
         <service
-            android:name=".activeRun.service.ActiveRunService"
+            android:name="com.revakovskyi.core.notification.ActiveRunService"
             android:foregroundServiceType="location" />
 
         <meta-data
