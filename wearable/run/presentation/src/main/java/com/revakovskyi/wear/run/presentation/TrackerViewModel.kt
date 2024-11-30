@@ -15,19 +15,25 @@ import com.revakovskyi.wear.run.domain.ExerciseTracker
 import com.revakovskyi.wear.run.domain.RunningTracker
 import com.revakovskyi.wear.run.domain.phone.ConnectorToPhone
 import com.revakovskyi.wear.run.presentation.utils.toUiText
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TrackerViewModel(
     private val exerciseTracker: ExerciseTracker,
     private val connectorToPhone: ConnectorToPhone,
@@ -55,6 +61,8 @@ class TrackerViewModel(
         started = SharingStarted.Lazily,
         initialValue = false
     )
+
+    private val isAmbientMode = snapshotFlow { state.isAmbientMode }
 
 
     init {
@@ -126,8 +134,14 @@ class TrackerViewModel(
     }
 
     private fun observeHeartRate() {
-        runningTracker
-            .heartRate
+        isAmbientMode
+            .flatMapLatest { isAmbientMode ->
+                if (isAmbientMode) {
+                    runningTracker
+                        .heartRate
+                        .sample(10.seconds)
+                } else runningTracker.heartRate
+            }
             .onEach { state = state.copy(heartRate = it) }
             .launchIn(viewModelScope)
     }
@@ -140,8 +154,14 @@ class TrackerViewModel(
     }
 
     private fun observeRunElapsedTime() {
-        runningTracker
-            .elapsedTime
+        isAmbientMode
+            .flatMapLatest { isAmbientMode ->
+                if (isAmbientMode) {
+                    runningTracker
+                        .elapsedTime
+                        .sample(10.seconds)
+                } else runningTracker.elapsedTime
+            }
             .onEach { state = state.copy(elapsedDuration = it) }
             .launchIn(viewModelScope)
     }
@@ -180,6 +200,8 @@ class TrackerViewModel(
             is TrackerAction.OnBodySensorPermissionResult -> handleBodySensorPermissionRequest(action.isGranted)
             TrackerAction.OnFinishRunClick -> finishRun()
             TrackerAction.OnToggleRunClick -> markRunAsActive(isActive = !state.isRunActive)
+            is TrackerAction.OnEnterAmbientMode -> enterAmbientMode(action.burnInProtectionRequired)
+            TrackerAction.OnExitAmbientMode -> exitAmbientMode()
         }
     }
 
@@ -199,6 +221,7 @@ class TrackerViewModel(
             TrackerAction.OnFinishRunClick -> MessagingAction.Finish
             TrackerAction.OnToggleRunClick -> chooseToggleMessagingAction()
             is TrackerAction.OnBodySensorPermissionResult -> null
+            else -> null
         }
 
     private fun chooseToggleMessagingAction(): MessagingAction =
@@ -226,6 +249,17 @@ class TrackerViewModel(
             hasStartedRunning = false,
             isRunActive = false,
         )
+    }
+
+    private fun enterAmbientMode(burnInProtectionRequired: Boolean) {
+        state = state.copy(
+            isAmbientMode = true,
+            burnInProtectionRequired = burnInProtectionRequired,
+        )
+    }
+
+    private fun exitAmbientMode() {
+        state = state.copy(isAmbientMode = false)
     }
 
 }

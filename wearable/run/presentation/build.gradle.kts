@@ -38,5 +38,6 @@ dependencies {
     implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.play.services.wearable)
+    implementation(libs.androidx.wear)
 
 }

@@ -44,6 +44,8 @@ import com.revakovskyi.core.peresentation.ui.toFormattedKm
 import com.revakovskyi.core.presentation.design_system_wear.RunningTrackerWearTheme
 import com.revakovskyi.core.presentation.designsystem.theme.ExclamationMarkIcon
 import com.revakovskyi.core.presentation.designsystem.theme.FinishIcon
+import com.revakovskyi.wear.run.presentation.ambient.AmbientObserver
+import com.revakovskyi.wear.run.presentation.ambient.ambientMode
 import com.revakovskyi.wear.run.presentation.components.ToggleRunButton
 import com.revakovskyi.wear.run.presentation.components.TrackerDataCard
 import org.koin.androidx.compose.koinViewModel
@@ -95,6 +97,13 @@ private fun TrackerScreen(
         runPermissionLauncher(context, permissionLauncher)
     }
 
+    AmbientObserver(
+        onEnterAmbient = { ambientDetails ->
+            onAction(TrackerAction.OnEnterAmbientMode(ambientDetails.burnInProtectionRequired))
+        },
+        onExitAmbient = { onAction(TrackerAction.OnExitAmbientMode) }
+    )
+
 
     if (state.isConnectedPhoneNearby) RunTrackPreview(state, onAction)
     else ConnectedExclamationPreview()
@@ -141,6 +150,7 @@ private fun RunTrackPreview(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .ambientMode(state.isAmbientMode, state.burnInProtectionRequired)
     ) {
 
         TrackedRunningDetailsRow(state)
