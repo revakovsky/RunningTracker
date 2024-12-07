@@ -8,7 +8,10 @@ class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.run {
-            pluginManager.apply("runningtracker.android.application")
+            pluginManager.apply {
+                apply("runningtracker.android.application")
+                apply("org.jetbrains.kotlin.plugin.compose")
+            }
 
             val commonExtension = extensions.getByType<ApplicationExtension>()
             configureAndroidCompose(commonExtension)

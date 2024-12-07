@@ -10,6 +10,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
         target.run {
             pluginManager.run {
                 apply("runningtracker.android.library")
+                apply("org.jetbrains.kotlin.plugin.compose")
             }
 
             extensions.getByType<LibraryExtension>().also { extension ->

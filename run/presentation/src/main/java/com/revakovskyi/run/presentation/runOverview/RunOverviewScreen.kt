@@ -126,7 +126,7 @@ private fun RunOverviewScreen(
                 RunListItem(
                     runUi = runUi,
                     onDeleteClick = { onAction(RunOverviewAction.DeleteRun(runUi)) },
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItem()
                 )
 
             }

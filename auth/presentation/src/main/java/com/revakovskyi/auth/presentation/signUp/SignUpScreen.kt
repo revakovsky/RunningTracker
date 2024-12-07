@@ -86,6 +86,7 @@ fun SignUpScreenRoot(
 }
 
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SignUpScreen(

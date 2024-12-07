@@ -13,8 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text2.BasicSecureTextField
-import androidx.compose.foundation.text2.input.TextObfuscationMode
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -35,6 +36,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.core.presentation.designsystem.R
 import com.revakovskyi.core.presentation.designsystem.theme.EyeClosedIcon
@@ -71,20 +74,23 @@ fun TrackerPasswordTextField(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        BasicSecureTextField(
+        BasicTextField(
             value = text,
             onValueChange = { onTextChange(it) },
-            textObfuscationMode = if (isPasswordVisible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden,
             textStyle = LocalTextStyle.current.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done,
-            onSubmit = {
-                onConfirm()
-                true
-            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onConfirm() }
+            ),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+            singleLine = true,
+            maxLines = 1,
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
                 .background(
@@ -108,7 +114,7 @@ fun TrackerPasswordTextField(
                         }
                     }
                 },
-            decorator = { innerBox ->
+            decorationBox = { innerBox ->
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -150,7 +156,6 @@ fun TrackerPasswordTextField(
                     }
 
                 }
-
             }
         )
 
