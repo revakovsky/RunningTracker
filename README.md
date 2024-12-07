@@ -14,7 +14,6 @@ An app that tracks user runs and displays them with a running route on the map
 - Custom Result class to process Http requests and errors
 - Android Splash screen API
 - Authentication process
-- BasicTextField2 with state
 - Bearer tokens access and refresh mechanism
 - Encrypted SharedPreferences to save Bearer tokens to stay logged in
 - Work with focusable states and bringIntoButtonViewRequester
