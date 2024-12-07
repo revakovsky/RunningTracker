@@ -1,13 +1,9 @@
-@file:Suppress("OPT_IN_USAGE_FUTURE_ERROR")
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.revakovskyi.auth.presentation.signIn
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.text2.input.textAsFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.auth.domain.AuthRepository
@@ -36,10 +32,12 @@ class SignInViewModel(
 
 
     init {
-        combine(state.email.textAsFlow(), state.password.textAsFlow()) { email, password ->
+        combine(
+            snapshotFlow { state.email },
+            snapshotFlow { state.password }
+        ) { email, password ->
             state = state.copy(
-                canSignIn = userDataValidator.isValidEmail(email.toString().trim()) &&
-                        password.isNotEmpty()
+                canSignIn = userDataValidator.isValidEmail(email.trim()) && password.isNotEmpty()
             )
         }.launchIn(viewModelScope)
     }
@@ -48,7 +46,9 @@ class SignInViewModel(
         when (action) {
             SignInAction.OnSignInClick -> signIn()
             SignInAction.OnSignUpClick -> Unit
-            SignInAction.OnTogglePasswordVisibility -> state = state.copy(isPasswordVisible = !state.isPasswordVisible)
+            SignInAction.OnTogglePasswordVisibility -> togglePasswordVisibility()
+            is SignInAction.EmailEntered -> emailEntered(action.email)
+            is SignInAction.PasswordEntered -> passwordEntered(action.password)
         }
     }
 
@@ -56,8 +56,8 @@ class SignInViewModel(
         viewModelScope.launch {
             state = state.copy(isSigningIn = true)
             val result = authRepository.signIn(
-                email = state.email.text.toString().trim(),
-                password = state.password.text.toString()
+                email = state.email.trim(),
+                password = state.password
             )
             state = state.copy(isSigningIn = false)
 
@@ -79,6 +79,18 @@ class SignInViewModel(
                 is Result.Success -> eventChannel.send(SignInEvent.SignInSuccess)
             }
         }
+    }
+
+    private fun togglePasswordVisibility() {
+        state = state.copy(isPasswordVisible = !state.isPasswordVisible)
+    }
+
+    private fun emailEntered(email: String) {
+        state = state.copy(email = email)
+    }
+
+    private fun passwordEntered(password: String) {
+        state = state.copy(password = password)
     }
 
 }

@@ -1,8 +1,3 @@
-@file:OptIn(
-    ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
-    ExperimentalFoundationApi::class
-)
-
 package com.revakovskyi.core.presentation.designsystem.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text2.BasicSecureTextField
-import androidx.compose.foundation.text2.input.TextFieldState
 import androidx.compose.foundation.text2.input.TextObfuscationMode
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,22 +36,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.presentation.designsystem.R
 import com.revakovskyi.core.presentation.designsystem.theme.EyeClosedIcon
 import com.revakovskyi.core.presentation.designsystem.theme.EyeOpenedIcon
 import com.revakovskyi.core.presentation.designsystem.theme.LockIcon
-import com.revakovskyi.core.presentation.designsystem.R
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TrackerPasswordTextField(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    text: String,
     isPasswordVisible: Boolean,
     hint: String,
     title: String?,
     bringIntoViewRequester: BringIntoViewRequester = BringIntoViewRequester(),
     onTogglePasswordVisibility: () -> Unit,
     onConfirm: () -> Unit,
+    onTextChange: (newPassword: String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var isFocused by remember { mutableStateOf(false) }
@@ -76,7 +72,8 @@ fun TrackerPasswordTextField(
         Spacer(modifier = Modifier.height(4.dp))
 
         BasicSecureTextField(
-            state = state,
+            value = text,
+            onValueChange = { onTextChange(it) },
             textObfuscationMode = if (isPasswordVisible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden,
             textStyle = LocalTextStyle.current.copy(
                 color = MaterialTheme.colorScheme.onBackground
@@ -127,7 +124,7 @@ fun TrackerPasswordTextField(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Box(modifier = Modifier.weight(1f)) {
-                        if (state.text.isEmpty() && !isFocused) {
+                        if (text.isEmpty() && !isFocused) {
                             Text(
                                 text = hint,
                                 style = MaterialTheme.typography.bodyLarge.copy(

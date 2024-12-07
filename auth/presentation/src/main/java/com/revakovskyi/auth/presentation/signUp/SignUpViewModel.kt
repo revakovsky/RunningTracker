@@ -1,13 +1,9 @@
-@file:Suppress("OPT_IN_USAGE_FUTURE_ERROR")
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.revakovskyi.auth.presentation.signUp
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.text2.input.textAsFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.revakovskyi.auth.domain.AuthRepository
@@ -36,10 +32,10 @@ class SignUpViewModel(
 
 
     init {
-        state.email
-            .textAsFlow()
+        snapshotFlow { state.email }
             .onEach { email ->
-                val isValidEmail = userDataValidator.isValidEmail(email.toString())
+                val isValidEmail = userDataValidator.isValidEmail(email)
+
                 state = state.copy(
                     isValidEmail = isValidEmail,
                     canRegister = isValidEmail && state.passwordValidationState.isValidPassword && !state.isRegistering
@@ -47,10 +43,10 @@ class SignUpViewModel(
             }
             .launchIn(viewModelScope)
 
-        state.password
-            .textAsFlow()
+        snapshotFlow { state.password }
             .onEach { password ->
-                val passwordValidationState = userDataValidator.isValidPassword(password.toString())
+                val passwordValidationState = userDataValidator.isValidPassword(password)
+
                 state = state.copy(
                     passwordValidationState = passwordValidationState,
                     canRegister = state.isValidEmail && passwordValidationState.isValidPassword && !state.isRegistering
@@ -63,11 +59,9 @@ class SignUpViewModel(
         when (action) {
             SignUpAction.OnRegisterClick -> register()
             SignUpAction.OnSignInClick -> Unit
-            SignUpAction.OnTogglePasswordVisibilityClick -> {
-                state = state.copy(
-                    isPasswordVisible = !state.isPasswordVisible
-                )
-            }
+            SignUpAction.OnTogglePasswordVisibilityClick -> togglePasswordVisibility()
+            is SignUpAction.EmailEntered -> emailEntered(action.email)
+            is SignUpAction.PasswordEntered -> passwordEntered(action.password)
         }
     }
 
@@ -76,8 +70,8 @@ class SignUpViewModel(
             state = state.copy(isRegistering = true)
 
             val result = authRepository.register(
-                email = state.email.text.toString().trim(),
-                password = state.password.text.toString()
+                email = state.email.trim(),
+                password = state.password
             )
 
             state = state.copy(isRegistering = false)
@@ -94,6 +88,18 @@ class SignUpViewModel(
                 is Result.Success -> eventChannel.send(SignUpEvent.RegistrationSuccess)
             }
         }
+    }
+
+    private fun togglePasswordVisibility() {
+        state = state.copy(isPasswordVisible = !state.isPasswordVisible)
+    }
+
+    private fun emailEntered(email: String) {
+        state = state.copy(email = email)
+    }
+
+    private fun passwordEntered(password: String) {
+        state = state.copy(password = password)
     }
 
 }

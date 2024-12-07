@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.revakovskyi.auth.presentation.signUp
 
 import android.widget.Toast
@@ -39,16 +37,16 @@ import com.revakovskyi.auth.domain.UserDataValidator
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.rememberImeState
+import com.revakovskyi.core.presentation.designsystem.components.ActionButton
+import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
+import com.revakovskyi.core.presentation.designsystem.components.TrackerPasswordTextField
+import com.revakovskyi.core.presentation.designsystem.components.TrackerTextField
 import com.revakovskyi.core.presentation.designsystem.theme.CheckIcon
 import com.revakovskyi.core.presentation.designsystem.theme.CrossIcon
 import com.revakovskyi.core.presentation.designsystem.theme.EmailIcon
 import com.revakovskyi.core.presentation.designsystem.theme.Poppins
 import com.revakovskyi.core.presentation.designsystem.theme.TrackerDarkRed
 import com.revakovskyi.core.presentation.designsystem.theme.TrackerGreen
-import com.revakovskyi.core.presentation.designsystem.components.ActionButton
-import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
-import com.revakovskyi.core.presentation.designsystem.components.TrackerPasswordTextField
-import com.revakovskyi.core.presentation.designsystem.components.TrackerTextField
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "clickable_text"
@@ -60,7 +58,6 @@ fun SignUpScreenRoot(
     onSuccessfulRegistration: () -> Unit,
 ) {
     val context = LocalContext.current
-    val keyBoardController = LocalSoftwareKeyboardController.current
 
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
@@ -78,8 +75,6 @@ fun SignUpScreenRoot(
     SignUpScreen(
         state = viewModel.state,
         onAction = { action ->
-            keyBoardController?.hide()
-
             when (action) {
                 SignUpAction.OnSignInClick -> onSignInClick()
                 else -> Unit
@@ -91,11 +86,13 @@ fun SignUpScreenRoot(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SignUpScreen(
     state: SignUpState,
     onAction: (SignUpAction) -> Unit,
 ) {
+    val keyBoardController = LocalSoftwareKeyboardController.current
     val localFocusManager = LocalFocusManager.current
     val bringIntoButtonViewRequester = remember { BringIntoViewRequester() }
     val imeStateOpen by rememberImeState()
@@ -157,26 +154,31 @@ private fun SignUpScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             TrackerTextField(
-                state = state.email,
+                text = state.email,
                 startIcon = EmailIcon,
                 endIcon = if (state.isValidEmail) CheckIcon else null,
                 hint = stringResource(R.string.example_email),
                 title = stringResource(R.string.email),
                 additionalInfo = stringResource(R.string.must_be_a_valid_email),
                 keyboardType = KeyboardType.Email,
-                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) }
+                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) },
+                onTextChange = { email -> onAction(SignUpAction.EmailEntered(email)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TrackerPasswordTextField(
-                state = state.password,
+                text = state.password,
                 isPasswordVisible = state.isPasswordVisible,
                 hint = stringResource(R.string.password),
                 title = stringResource(R.string.password),
                 bringIntoViewRequester = bringIntoButtonViewRequester,
                 onTogglePasswordVisibility = { onAction(SignUpAction.OnTogglePasswordVisibilityClick) },
-                onConfirm = { localFocusManager.clearFocus() }
+                onConfirm = {
+                    keyBoardController?.hide()
+                    localFocusManager.clearFocus()
+                },
+                onTextChange = { password -> onAction(SignUpAction.PasswordEntered(password)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -217,7 +219,10 @@ private fun SignUpScreen(
                 isLoading = state.isRegistering,
                 enabled = state.canRegister,
                 bringIntoViewRequester = bringIntoButtonViewRequester,
-                onClick = { onAction(SignUpAction.OnRegisterClick) },
+                onClick = {
+                    keyBoardController?.hide()
+                    onAction(SignUpAction.OnRegisterClick)
+                },
             )
 
         }

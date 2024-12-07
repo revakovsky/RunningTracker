@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package com.revakovskyi.auth.presentation.signIn
 
 import android.widget.Toast
@@ -37,12 +35,12 @@ import androidx.compose.ui.unit.dp
 import com.revakovskyi.auth.presentation.R
 import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.peresentation.ui.rememberImeState
-import com.revakovskyi.core.presentation.designsystem.theme.EmailIcon
-import com.revakovskyi.core.presentation.designsystem.theme.Poppins
 import com.revakovskyi.core.presentation.designsystem.components.ActionButton
 import com.revakovskyi.core.presentation.designsystem.components.GradientBackground
 import com.revakovskyi.core.presentation.designsystem.components.TrackerPasswordTextField
 import com.revakovskyi.core.presentation.designsystem.components.TrackerTextField
+import com.revakovskyi.core.presentation.designsystem.theme.EmailIcon
+import com.revakovskyi.core.presentation.designsystem.theme.Poppins
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "clickable_text"
@@ -54,7 +52,6 @@ fun SignInScreenRoot(
     onSignUpClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val keyBoardController = LocalSoftwareKeyboardController.current
 
     ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
@@ -72,8 +69,6 @@ fun SignInScreenRoot(
     SignInScreen(
         state = viewModel.state,
         onAction = { action ->
-            keyBoardController?.hide()
-
             when (action) {
                 SignInAction.OnSignUpClick -> onSignUpClick()
                 else -> Unit
@@ -85,11 +80,13 @@ fun SignInScreenRoot(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SignInScreen(
     state: SignInState,
     onAction: (action: SignInAction) -> Unit,
 ) {
+    val keyBoardController = LocalSoftwareKeyboardController.current
     val localFocusManager = LocalFocusManager.current
     val bringIntoButtonViewRequester = remember { BringIntoViewRequester() }
     val imeStateOpen by rememberImeState()
@@ -123,25 +120,30 @@ private fun SignInScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             TrackerTextField(
-                state = state.email,
+                text = state.email,
                 startIcon = EmailIcon,
                 endIcon = null,
                 hint = stringResource(R.string.example_email),
                 title = stringResource(R.string.email),
                 keyboardType = KeyboardType.Email,
-                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) }
+                onNextClick = { localFocusManager.moveFocus(FocusDirection.Down) },
+                onTextChange = { email -> onAction(SignInAction.EmailEntered(email)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TrackerPasswordTextField(
-                state = state.password,
+                text = state.password,
                 isPasswordVisible = state.isPasswordVisible,
                 hint = stringResource(R.string.password),
                 title = stringResource(R.string.password),
                 bringIntoViewRequester = bringIntoButtonViewRequester,
                 onTogglePasswordVisibility = { onAction(SignInAction.OnTogglePasswordVisibility) },
-                onConfirm = { localFocusManager.clearFocus() }
+                onConfirm = {
+                    keyBoardController?.hide()
+                    localFocusManager.clearFocus()
+                },
+                onTextChange = { password -> onAction(SignInAction.PasswordEntered(password)) }
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -151,7 +153,10 @@ private fun SignInScreen(
                 isLoading = state.isSigningIn,
                 enabled = state.canSignIn && !state.isSigningIn,
                 bringIntoViewRequester = bringIntoButtonViewRequester,
-                onClick = { onAction(SignInAction.OnSignInClick) },
+                onClick = {
+                    keyBoardController?.hide()
+                    onAction(SignInAction.OnSignInClick)
+                },
             )
 
             val annotatedString = buildAnnotatedString {

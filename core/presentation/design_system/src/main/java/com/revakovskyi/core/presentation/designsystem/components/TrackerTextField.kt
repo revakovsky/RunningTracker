@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
-
 package com.revakovskyi.core.presentation.designsystem.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,11 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text2.BasicTextField2
-import androidx.compose.foundation.text2.input.TextFieldLineLimits
-import androidx.compose.foundation.text2.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +38,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TrackerTextField(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    text: String,
     startIcon: ImageVector?,
     endIcon: ImageVector?,
     hint: String,
@@ -52,6 +47,7 @@ fun TrackerTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     additionalInfo: String? = null,
     onNextClick: () -> Unit,
+    onTextChange: (String) -> Unit,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -88,8 +84,9 @@ fun TrackerTextField(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        BasicTextField2(
-            state = state,
+        BasicTextField(
+            value = text,
+            onValueChange = { newText -> onTextChange(newText) },
             textStyle = LocalTextStyle.current.copy(
                 color = MaterialTheme.colorScheme.onBackground
             ),
@@ -100,7 +97,8 @@ fun TrackerTextField(
             keyboardActions = KeyboardActions(
                 onNext = { onNextClick() }
             ),
-            lineLimits = TextFieldLineLimits.SingleLine,
+            singleLine = true,
+            maxLines = 1,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
@@ -115,7 +113,7 @@ fun TrackerTextField(
                 )
                 .padding(12.dp)
                 .onFocusEvent { event -> isFocused = event.isFocused },
-            decorator = { innerBox ->
+            decorationBox = { innerBox ->
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -133,7 +131,7 @@ fun TrackerTextField(
                     }
 
                     Box(modifier = Modifier.weight(1f)) {
-                        if (state.text.isEmpty() && !isFocused) {
+                        if (text.isEmpty() && !isFocused) {
                             Text(
                                 text = hint,
                                 style = MaterialTheme.typography.bodyLarge.copy(
