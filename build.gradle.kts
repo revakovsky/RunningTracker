@@ -9,4 +9,5 @@ plugins {
     alias(libs.plugins.mapsplatform.secrets.plugin) apply false
     alias(libs.plugins.room) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.junit5) apply false
 }
