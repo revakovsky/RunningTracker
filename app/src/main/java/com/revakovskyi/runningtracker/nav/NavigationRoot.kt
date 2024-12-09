@@ -26,53 +26,50 @@ fun NavigationRoot(
 
     NavHost(
         navController = navHostController,
-        startDestination = if (isSignedIn) Routes.Run.route else Routes.Auth.route
+        startDestination = if (isSignedIn) Routes.Run else Routes.Auth
     ) {
-
         authGraph(navHostController)
         runGraph(navHostController, onAnalyticsClick)
-
     }
 
 }
 
 private fun NavGraphBuilder.authGraph(navHostController: NavHostController) {
-    navigation(startDestination = Screens.Intro.route, route = Routes.Auth.route) {
 
-        composable(route = Screens.Intro.route) {
+    navigation<Routes.Auth>(startDestination = Routes.Auth.Screens.Intro) {
+
+        composable<Routes.Auth.Screens.Intro> {
             IntroScreenRoute(
-                onSignInClick = { navHostController.navigate(Screens.SignIn.route) },
-                onSignUpClick = { navHostController.navigate(Screens.SignUp.route) }
+                onSignInClick = { navHostController.navigate(Routes.Auth.Screens.SignIn) },
+                onSignUpClick = { navHostController.navigate(Routes.Auth.Screens.SignUp) }
             )
         }
 
-        composable(route = Screens.SignUp.route) {
+        composable<Routes.Auth.Screens.SignUp> {
             SignUpScreenRoot(
                 onSignInClick = {
-                    navHostController.navigate(Screens.SignIn.route) {
-                        popUpTo(Screens.SignUp.route) {
+                    navHostController.navigate(Routes.Auth.Screens.SignIn) {
+                        popUpTo(Routes.Auth.Screens.SignUp) {
                             inclusive = true
                             saveState = true
                         }
                         restoreState = true
                     }
                 },
-                onSuccessfulRegistration = { navHostController.navigate(Screens.SignIn.route) }
+                onSuccessfulRegistration = { navHostController.navigate(Routes.Auth.Screens.SignIn) }
             )
         }
 
-        composable(route = Screens.SignIn.route) {
+        composable<Routes.Auth.Screens.SignIn> {
             SignInScreenRoot(
                 onSuccessfulSignIn = {
-                    navHostController.navigate(Routes.Run.route) {
-                        popUpTo(Routes.Auth.route) {
-                            inclusive = true
-                        }
+                    navHostController.navigate(Routes.Run) {
+                        popUpTo(Routes.Auth) { inclusive = true }
                     }
                 },
                 onSignUpClick = {
-                    navHostController.navigate(Screens.SignUp.route) {
-                        popUpTo(Screens.SignIn.route) {
+                    navHostController.navigate(Routes.Auth.Screens.SignUp) {
+                        popUpTo(Routes.Auth.Screens.SignIn) {
                             inclusive = true
                             saveState = true
                         }
@@ -91,26 +88,21 @@ private fun NavGraphBuilder.runGraph(
     navHostController: NavHostController,
     onAnalyticsClick: () -> Unit,
 ) {
-    navigation(startDestination = Screens.RunOverView.route, route = Routes.Run.route) {
+    navigation<Routes.Run>(startDestination = Routes.Run.Screens.RunOverView) {
 
-        composable(route = Screens.RunOverView.route) {
+        composable<Routes.Run.Screens.RunOverView> {
             RunOverviewScreenRoot(
                 onLogOutClick = {
-                    navHostController.navigate(Routes.Auth.route) {
-                        popUpTo(Routes.Run.route) {
-                            inclusive = true
-                        }
+                    navHostController.navigate(Routes.Auth) {
+                        popUpTo(Routes.Run) { inclusive = true }
                     }
                 },
                 onAnalyticsClick = onAnalyticsClick,
-                onStartRunClick = {
-                    navHostController.navigate(Screens.ActiveRun.route)
-                }
+                onStartRunClick = { navHostController.navigate(Routes.Run.Screens.ActiveRun) }
             )
         }
 
-        composable(
-            route = Screens.ActiveRun.route,
+        composable<Routes.Run.Screens.ActiveRun>(
             deepLinks = listOf(
                 navDeepLink { uriPattern = ActiveRunService.DEEP_LINK }
             )
