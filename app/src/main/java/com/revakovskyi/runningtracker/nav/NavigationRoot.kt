@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.revakovskyi.auth.presentation.intro.IntroScreenRoute
@@ -19,10 +20,10 @@ import com.revakovskyi.runningtracker.presentation.MainActivity
 
 @Composable
 fun NavigationRoot(
-    navHostController: NavHostController,
     isSignedIn: Boolean,
     onAnalyticsClick: () -> Unit,
 ) {
+    val navHostController = rememberNavController()
 
     NavHost(
         navController = navHostController,

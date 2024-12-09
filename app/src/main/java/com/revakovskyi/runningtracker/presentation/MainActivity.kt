@@ -11,16 +11,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.rememberNavController
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.revakovskyi.core.peresentation.ui.setUpImeWindowInsets
 import com.revakovskyi.core.presentation.designsystem.theme.RunningTrackerTheme
 import com.revakovskyi.runningtracker.R
-import com.revakovskyi.runningtracker.utils.SplitInstallHelper
 import com.revakovskyi.runningtracker.nav.NavigationRoot
 import com.revakovskyi.runningtracker.presentation.components.AnalyticsInstallDialog
+import com.revakovskyi.runningtracker.utils.SplitInstallHelper
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -48,9 +47,7 @@ class MainActivity : ComponentActivity() {
             splitInstallManager = splitInstallManager,
             onShowResultingMessage = { stringResId -> showToast(stringResId) },
             onChangeAnalyticsDialogVisibility = { isVisible -> viewModel.setAnalyticsDialogVisibility(isVisible) },
-            onRequiresUserConfirmation = { state ->
-                splitInstallManager.startConfirmationDialogForResult(state, this@MainActivity, 0)
-            }
+            onRequiresUserConfirmation = { state -> splitInstallManager.startConfirmationDialogForResult(state, this@MainActivity, 0) }
         )
     }
 
@@ -61,11 +58,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navHostController = rememberNavController()
-
                     if (!viewModel.state.isCheckingAuthInfo) {
                         NavigationRoot(
-                            navHostController = navHostController,
                             isSignedIn = viewModel.state.isSignedIn,
                             onAnalyticsClick = { installOrStartAnalyticsFeature() }
                         )
