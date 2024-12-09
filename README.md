@@ -10,6 +10,7 @@ An app that tracks user runs and displays them with a running route on the map
 - Convention Gradle plugin
 - Secrets Gradle Plugin for Android
 - Koin for DI
+- Nested type safe navigation
 - Ktor HttpClient with its utility functions
 - Custom Result class to process Http requests and errors
 - Android Splash screen API
