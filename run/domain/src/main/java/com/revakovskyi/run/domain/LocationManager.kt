@@ -160,7 +160,7 @@ class LocationManager(
             currentLocations.last() + locationTimeStamp
         } else listOf(locationTimeStamp)
 
-        return currentLocations.replaceLast(lastLocationsList)
+        return currentLocations.replaceLast(lastLocationsList.distinct())
     }
 
     private fun sendToWatchElapsedTimeUpdates() {

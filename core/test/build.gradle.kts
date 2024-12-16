@@ -8,9 +8,13 @@ dependencies {
     // Other modules
     implementation(projects.core.domain)
     implementation(projects.core.connectivity.domain)
-    testImplementation(projects.core.test)
+    implementation(projects.run.domain)
 
-    // Kotlin
+    // Coroutines
     implementation(libs.kotlinx.coroutines.core)
+
+    // Testing
+    implementation(libs.junit5.api)
+    implementation(libs.coroutines.test)
 
 }
