@@ -30,3 +30,6 @@ An app that tracks user runs and displays them with a running route on the map
 - Discovering paired devices (phone and watch)
 - Share info and actions between paired devices by using Wearable Messaging Client
 - Ambient mode for the wearable device
+- Convention Gradle plugin for the testing
+- Sharable test utility in a multi-module project for Unit tests and Instrumented Integration tests
+- Unit and Instrumented Integration tests
