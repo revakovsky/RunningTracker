@@ -6,12 +6,12 @@ watches and manage your run status from either your phone or watch at the same t
 
 ---
 
-#### Basic Architecture
+### Basic Architecture
 - Multi-module project
 - MVI (Model-View-Intent) pattern
 - Offline-first app
 
-#### Project Configuration
+### Project Configuration
 - Convention Gradle plugins
 - Secrets Gradle Plugin for Android
 - Android Splash Screen API
@@ -20,17 +20,17 @@ watches and manage your run status from either your phone or watch at the same t
 - Work Manager to sync data
 - Availability and support of the Wear OS app
 
-#### Authentication
+### Authentication
 - Authentication process using bearer tokens for access and refresh mechanisms
 - Encrypted SharedPreferences to save bearer tokens and maintain login state
 
-#### Libraries and Frameworks
+### Libraries and Frameworks
 - Room Database for offline storage
 - Koin for dependency injection
 - Ktor HttpClient with its utility functions
 - Google Maps api
 
-#### Features and Functionality
+### Features and Functionality
 - Custom Result class to process Http requests and errors
 - Kotlin Flows to transfer data
 - Work with focusable states and bringIntoButtonViewRequester
@@ -39,12 +39,12 @@ watches and manage your run status from either your phone or watch at the same t
 - Foreground Service with a Pending intent to track the run in background and reopen a current
   active run screen
 
-#### Wear OS Integration
+### Wear OS Integration
 - Discovering paired devices (phone and watch)
 - Share info and actions between paired devices by using Wearable Messaging Client
 - Ambient mode for the wearable device
 
-#### Testing
+### Testing
 - Convention Gradle plugin for the testing
 - Sharable test utility in a multi-module project for Unit tests and Instrumented Integration tests
 - Unit and Instrumented Integration tests
