@@ -1,35 +1,50 @@
 # Running Tracker
 
-An app that tracks user runs and displays them with a running route on the map
+An app that tracks your runs, displays your routes on a map in real time, and keeps you connected
+across all your devices. The app also has the ability to connect wearable devices such as smart
+watches and manage your run status from either your phone or watch at the same time.
 
 ---
 
+#### Basic Architecture
 - Multi-module project
-- MVI
+- MVI (Model-View-Intent) pattern
 - Offline-first app
-- Convention Gradle plugin
+
+#### Project Configuration
+- Convention Gradle plugins
 - Secrets Gradle Plugin for Android
-- Koin for DI
-- Nested type safe navigation
+- Android Splash Screen API
+- Nested type-safe navigation
+- Implementing a dynamic loaded Analytics module in the app
+- Work Manager to sync data
+- Availability and support of the Wear OS app
+
+#### Authentication
+- Authentication process using bearer tokens for access and refresh mechanisms
+- Encrypted SharedPreferences to save bearer tokens and maintain login state
+
+#### Libraries and Frameworks
+- Room Database for offline storage
+- Koin for dependency injection
 - Ktor HttpClient with its utility functions
+- Google Maps api
+
+#### Features and Functionality
 - Custom Result class to process Http requests and errors
-- Android Splash screen API
-- Authentication process
-- Bearer tokens access and refresh mechanism
-- Encrypted SharedPreferences to save Bearer tokens to stay logged in
+- Kotlin Flows to transfer data
 - Work with focusable states and bringIntoButtonViewRequester
 - Multiple permission handling
-- Google Maps
-- Tracking location and drawing a running path 
-- Kotlin Flows to transfer data
-- Foreground Service with a Pending intent to track the run in background and reopen a current active run screen
-- Room DB
-- Work Manager to sync data
-- Implementing a dynamic loaded Analytics module in the app
-- Availability and support of the Wear OS app
+- Tracking location and drawing a running path
+- Foreground Service with a Pending intent to track the run in background and reopen a current
+  active run screen
+
+#### Wear OS Integration
 - Discovering paired devices (phone and watch)
 - Share info and actions between paired devices by using Wearable Messaging Client
 - Ambient mode for the wearable device
+
+#### Testing
 - Convention Gradle plugin for the testing
 - Sharable test utility in a multi-module project for Unit tests and Instrumented Integration tests
 - Unit and Instrumented Integration tests
