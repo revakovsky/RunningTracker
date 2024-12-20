@@ -30,6 +30,9 @@ class SignInViewModel(
     private val eventChannel = Channel<SignInEvent>()
     val events = eventChannel.receiveAsFlow()
 
+    fun setStateForTest(newState: SignInState) {
+        state = newState
+    }
 
     init {
         combine(

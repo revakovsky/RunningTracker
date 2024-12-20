@@ -11,6 +11,8 @@ class AndroidJUnit5ConventionPlugin : Plugin<Project> {
             pluginManager.apply("de.mannodermaus.android-junit5")
 
             dependencies {
+                "androidTestImplementation"(project(":core:android_test"))
+
                 "androidTestImplementation"(libs.findLibrary("junit5.api").get())
                 "androidTestImplementation"(libs.findLibrary("junit5.params").get())
                 "androidTestImplementation"(libs.findLibrary("junit5.android.test.compose").get())
@@ -20,6 +22,9 @@ class AndroidJUnit5ConventionPlugin : Plugin<Project> {
                 "androidTestImplementation"(libs.findLibrary("assertk").get())
                 "androidTestImplementation"(libs.findLibrary("coroutines.test").get())
                 "androidTestImplementation"(libs.findLibrary("turbine").get())
+
+                "androidTestImplementation"(libs.findLibrary("ktor.client.mock").get())
+                "androidTestImplementation"(libs.findBundle("ktor").get())
             }
         }
     }
