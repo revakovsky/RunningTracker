@@ -9,8 +9,8 @@ watches and manage your run status from either your phone or watch at the same t
 ### Requirements and Limitations
 
 #### Minimum Android Version:
-Mobile app: Android 8.0 (API level 26)
-Wear OS app: Android 11.0 (API level 30)
+- Mobile app: Android 8.0 (API level 26)
+- Wear OS app: Android 11.0 (API level 30)
 
 #### Project Launch:
 This project requires a private API key, which is not included in the public repository. As a
