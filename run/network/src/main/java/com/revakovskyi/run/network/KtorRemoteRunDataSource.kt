@@ -30,10 +30,20 @@ private const val POST_DELETE_END_POINT = "/run"
 private const val RUN_KEY = "RUN_DATA"
 private const val MAP_KEY = "MAP_PICTURE"
 
+/**
+ * A data source implementation for fetching, posting, and deleting run data from a remote server.
+ *
+ * @param httpClient The Ktor HTTP client used for making API requests.
+ */
 class KtorRemoteRunDataSource(
     private val httpClient: HttpClient,
 ) : RemoteRunDataSource {
 
+    /**
+     * Fetches all runs from the remote server.
+     *
+     * @return A `Result` containing a list of `Run` objects or a `DataError.Network` on failure.
+     */
     override suspend fun getRuns(): Result<List<Run>, DataError.Network> {
         return httpClient
             .get<List<RunDto>>(route = GET_END_POINT)
@@ -42,6 +52,13 @@ class KtorRemoteRunDataSource(
             }
     }
 
+    /**
+     * Sends a new run and its associated map picture to the remote server.
+     *
+     * @param run The `Run` object to be uploaded.
+     * @param mapPicture A byte array representing the map picture associated with the run.
+     * @return A `Result` containing the uploaded `Run` object or a `DataError.Network` on failure.
+     */
     override suspend fun postRun(run: Run, mapPicture: ByteArray): Result<Run, DataError.Network> {
         val runRequestJson = Json.encodeToString(run.toRunRequest())
         val result: Result<RunDto, DataError.Network> = safeCall<RunDto> {
@@ -50,6 +67,13 @@ class KtorRemoteRunDataSource(
         return result.map { it.toRun() }
     }
 
+    /**
+     * Helper function to construct and send a multipart HTTP request containing the run data and map picture.
+     *
+     * @param runRequestJson The JSON string representation of the run data.
+     * @param mapPicture A byte array representing the map picture.
+     * @return An `HttpResponse` object representing the server's response.
+     */
     private suspend fun httpResponse(
         runRequestJson: String,
         mapPicture: ByteArray,
@@ -62,6 +86,13 @@ class KtorRemoteRunDataSource(
         }
     }
 
+    /**
+     * Creates the multipart form data required for uploading the run data and map picture.
+     *
+     * @param runRequestJson The JSON string representation of the run data.
+     * @param mapPicture A byte array representing the map picture.
+     * @return A list of `PartData` objects containing the form data.
+     */
     private fun createPartDataList(
         runRequestJson: String,
         mapPicture: ByteArray,
@@ -78,6 +109,12 @@ class KtorRemoteRunDataSource(
         }
     }
 
+    /**
+     * Deletes a specific run from the remote server using its unique ID.
+     *
+     * @param id The unique identifier of the run to be deleted.
+     * @return An `EmptyDataResult` indicating success or failure with `DataError.Network`.
+     */
     override suspend fun deleteRun(id: String): EmptyDataResult<DataError.Network> {
         return httpClient.delete(
             route = POST_DELETE_END_POINT,

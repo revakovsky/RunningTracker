@@ -13,6 +13,25 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
+/**
+ * Creates a `OneTimeWorkRequest` for a specified `CoroutineWorker` with optional input data and configuration.
+ *
+ * @param T The type of `CoroutineWorker` this request is targeting.
+ * @param tag A unique tag to identify this work request.
+ * @param inputDataBuilder A lambda to define the input data using a `Data.Builder`.
+ *                         Defaults to an empty builder.
+ * @return A configured `OneTimeWorkRequest`.
+ *
+ * Usage:
+ * ```
+ * val request = createOneTimeWorkRequest<MyWorker>("MyTag") {
+ *     putString("key", "value")
+ * }
+ * ```
+ *
+ * - Constraints: Requires a connected network.
+ * - Backoff policy: Exponential with a 2-second delay.
+ */
 inline fun <reified T : CoroutineWorker> createOneTimeWorkRequest(
     tag: String,
     inputDataBuilder: Data.Builder.() -> Unit = {},
@@ -38,6 +57,24 @@ inline fun <reified T : CoroutineWorker> createOneTimeWorkRequest(
         .build()
 }
 
+
+/**
+ * Creates a `PeriodicWorkRequest` for a specified `CoroutineWorker` with a defined interval.
+ *
+ * @param T The type of `CoroutineWorker` this request is targeting.
+ * @param tag A unique tag to identify this work request.
+ * @param interval The periodic interval at which the work should repeat.
+ * @return A configured `PeriodicWorkRequest`.
+ *
+ * Usage:
+ * ```
+ * val request = createPeriodicWorkRequest<MyWorker>("MyPeriodicTag", 1.hours)
+ * ```
+ *
+ * - Constraints: Requires a connected network.
+ * - Backoff policy: Exponential with a 2-second delay.
+ * - Initial delay: 30 minutes.
+ */
 inline fun <reified T : CoroutineWorker> createPeriodicWorkRequest(
     tag: String,
     interval: Duration,

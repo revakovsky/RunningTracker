@@ -31,6 +31,9 @@ class SignUpViewModel(
     val events = eventChannel.receiveAsFlow()
 
 
+    /**
+     * Updates the state to reflect the validity of user inputs and the ability to register.
+     */
     init {
         snapshotFlow { state.email }
             .onEach { email ->

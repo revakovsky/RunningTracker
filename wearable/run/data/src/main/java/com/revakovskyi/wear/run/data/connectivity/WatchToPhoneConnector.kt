@@ -18,6 +18,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.shareIn
 
+/**
+ * A connector class that facilitates communication between a smartwatch and a phone.
+ *
+ * @param nodeDiscovery An implementation of `NodeDiscovery` to observe connected devices.
+ * @param applicationScope The coroutine scope used for managing asynchronous operations.
+ * @param messagingClient An implementation of `MessagingClient` to handle message sending and receiving.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class WatchToPhoneConnector(
     nodeDiscovery: NodeDiscovery,
@@ -28,6 +35,12 @@ class WatchToPhoneConnector(
     private val _connectedDevice = MutableStateFlow<DeviceNode?>(null)
     override val connectedDevice = _connectedDevice.asStateFlow()
 
+    /**
+     * A `Flow` of `MessagingAction` that listens to actions received from the phone.
+     * It observes connected devices of type `WATCH` and connects to the first nearby node if available.
+     *
+     * The actions are shared across the application scope.
+     */
     override val messagingActions: Flow<MessagingAction> = nodeDiscovery
         .observeConnectedDevices(localDeviceType = DeviceType.WATCH)
         .flatMapLatest { deviceNodes ->
@@ -43,6 +56,13 @@ class WatchToPhoneConnector(
             started = SharingStarted.Eagerly
         )
 
+    /**
+     * Sends a `MessagingAction` to the connected phone. If the connection is unavailable, the action
+     * will be queued for later delivery.
+     *
+     * @param action The `MessagingAction` to send.
+     * @return A result indicating success or a specific error.
+     */
     override suspend fun sendActionToPhone(action: MessagingAction): EmptyDataResult<MessagingError> {
         return messagingClient.sendOrQueueAction(action)
     }

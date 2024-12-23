@@ -30,6 +30,20 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * Manages location tracking, heart rate monitoring, and run data aggregation during an active run.
+ *
+ * This class is responsible for:
+ * - Observing user location at periodic intervals.
+ * - Tracking elapsed time during the run.
+ * - Collecting heart rate updates from a connected device (e.g., wearable).
+ * - Calculating run statistics like distance and pace in real-time.
+ * - Sending updates (e.g., elapsed time, distance) to a connected wearable device.
+ *
+ * @param locationObserver Observes the user's location at defined intervals.
+ * @param applicationScope Coroutine scope for managing asynchronous operations.
+ * @param connectorToWatch Manages communication with a connected wearable device.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class LocationManager(
     private val locationObserver: LocationObserver,
@@ -37,6 +51,9 @@ class LocationManager(
     private val connectorToWatch: ConnectorToWatch,
 ) {
 
+    /***
+     * Holds aggregated run data, such as distance, pace, and location history.
+     */
     private val _runData = MutableStateFlow(RunData())
     val runData = _runData.asStateFlow()
 
@@ -48,6 +65,9 @@ class LocationManager(
     private val _isTracking = MutableStateFlow(false)
     val isTracking = _isTracking.asStateFlow()
 
+    /***
+     * Observes the user's current location or emits null if location updates are disabled.
+     */
     val currentLocation: StateFlow<LocationWithAltitude?> = isObservingLocation
         .flatMapLatest { isObservingLocation ->
             if (isObservingLocation) locationObserver.observeLocation(1_000L)
@@ -59,6 +79,9 @@ class LocationManager(
             null
         )
 
+    /***
+     * Tracks the user's heart rate updates from the wearable device.
+     */
     private val heartRates = isTracking
         .flatMapLatest { isTracking ->
             if (isTracking) connectorToWatch.messagingActions
@@ -117,6 +140,12 @@ class LocationManager(
             .launchIn(applicationScope)
     }
 
+    /**
+     * Observes location updates and processes them into run statistics.
+     *
+     * - Combines location updates with elapsed time to create `LocationTimeStamp` instances.
+     * - Updates run data with new locations, heart rate data, and calculated statistics.
+     */
     private fun observeLocationUpdates() {
         currentLocation
             .filterNotNull()
@@ -135,6 +164,12 @@ class LocationManager(
             .launchIn(applicationScope)
     }
 
+    /**
+     * Updates run data with the latest location, heart rates, and recalculated statistics.
+     *
+     * @param locationTimeStamp The latest location timestamp.
+     * @param heartRates The list of heart rate readings.
+     */
     private fun updateRunData(locationTimeStamp: LocationTimeStamp, heartRates: List<Int>) {
         _runData.update {
             val newLocationsList = getLocationsWithNewLocation(locationTimeStamp)

@@ -11,6 +11,13 @@ private const val MAX_RUN_SPEED = 20.0
 
 object PolylineColorCalculator {
 
+    /**
+     * Calculates the color of the polyline segment between two location timestamps based on speed.
+     *
+     * @param location1 The starting location with timestamp.
+     * @param location2 The ending location with timestamp.
+     * @return A `Color` representing the speed-based color gradient.
+     */
     fun locationsToColor(location1: LocationTimeStamp, location2: LocationTimeStamp): Color {
         val distanceMeters = location1.locationWithAltitude.location.distanceTo(
             location2.locationWithAltitude.location
@@ -26,6 +33,15 @@ object PolylineColorCalculator {
         )
     }
 
+    /**
+     * Interpolates the color for a given speed using a gradient from green to yellow to red.
+     *
+     * @param speedKmh The speed in kilometers per hour.
+     * @param colorStart The starting color of the gradient (Green).
+     * @param colorMid The midpoint color of the gradient (Yellow).
+     * @param colorEnd The ending color of the gradient (Red).
+     * @return A `Color` representing the interpolated value for the given speed.
+     */
     private fun interpolateColor(
         speedKmh: Double,
         colorStart: Color,

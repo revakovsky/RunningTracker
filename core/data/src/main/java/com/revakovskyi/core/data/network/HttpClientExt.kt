@@ -16,6 +16,16 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 
+/**
+ * Constructs a full URL based on the provided route.
+ *
+ * - If the route already contains the base URL, it is returned as-is.
+ * - If the route starts with "/", it is appended to the base URL.
+ * - Otherwise, the route is appended to the base URL with a "/" separator.
+ *
+ * @param route The relative or full URL.
+ * @return The constructed full URL as a [String].
+ */
 fun constructRoute(route: String): String {
     return when {
         route.contains(BuildConfig.BASE_URL) -> route
@@ -25,6 +35,15 @@ fun constructRoute(route: String): String {
 }
 
 
+/**
+ * Converts an HTTP response to a [Result] object.
+ *
+ * - Maps HTTP status codes to predefined [DataError.Network] error types.
+ * - Extracts the response body for success cases.
+ *
+ * @param response The [HttpResponse] to process.
+ * @return A [Result] containing either the parsed response body or a network error.
+ */
 suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<T, DataError.Network> {
     return when (response.status.value) {
         in 200..299 -> Result.Success(response.body<T>())
@@ -39,6 +58,15 @@ suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<
 }
 
 
+/**
+ * Executes a network call safely, converting exceptions into [Result] errors.
+ *
+ * - Handles common exceptions like network unavailability and serialization issues.
+ * - Re-throws [CancellationException] to preserve coroutine behavior.
+ *
+ * @param execute A lambda that executes the network call and returns an [HttpResponse].
+ * @return A [Result] containing either the parsed response body or a network error.
+ */
 suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, DataError.Network> {
     val response = try {
         execute()
@@ -58,6 +86,16 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
 }
 
 
+/**
+ * Executes an HTTP GET request and safely handles the result.
+ *
+ * - Constructs the URL using [constructRoute].
+ * - Adds query parameters to the request.
+ *
+ * @param route The relative or full URL of the endpoint.
+ * @param queryParameters A map of query parameters to include in the request.
+ * @return A [Result] containing either the parsed response body or a network error.
+ */
 suspend inline fun <reified Response : Any> HttpClient.get(
     route: String,
     queryParameters: Map<String, Any?> = mapOf(),
@@ -74,6 +112,16 @@ suspend inline fun <reified Response : Any> HttpClient.get(
 }
 
 
+/**
+ * Executes an HTTP POST request and safely handles the result.
+ *
+ * - Constructs the URL using [constructRoute].
+ * - Sets the request body.
+ *
+ * @param route The relative or full URL of the endpoint.
+ * @param body The request body to send.
+ * @return A [Result] containing either the parsed response body or a network error.
+ */
 suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
     route: String,
     body: Request,
@@ -88,6 +136,16 @@ suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
 }
 
 
+/**
+ * Executes an HTTP DELETE request and safely handles the result.
+ *
+ * - Constructs the URL using [constructRoute].
+ * - Adds query parameters to the request.
+ *
+ * @param route The relative or full URL of the endpoint.
+ * @param queryParameters A map of query parameters to include in the request.
+ * @return A [Result] containing either the parsed response body or a network error.
+ */
 suspend inline fun <reified Response : Any> HttpClient.delete(
     route: String,
     queryParameters: Map<String, Any?> = mapOf(),

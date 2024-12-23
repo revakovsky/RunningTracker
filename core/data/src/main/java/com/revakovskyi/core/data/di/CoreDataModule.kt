@@ -13,6 +13,11 @@ import org.koin.dsl.module
 
 val coreDataModule = module {
 
+    /**
+     * Provides an instance of [HttpClient], configured with:
+     * - [CIO] as the HTTP engine. Can be replaced for any other engine including testing one
+     * - A [SessionStorage] implementation for session management.
+     */
     single<HttpClient> {
         HttpClientFactory(sessionStorage = get()).build(CIO.create())
     }

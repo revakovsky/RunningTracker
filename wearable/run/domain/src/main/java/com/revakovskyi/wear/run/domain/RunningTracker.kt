@@ -18,6 +18,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Duration
 
+/**
+ * The `RunningTracker` class coordinates tracking operations, including heart rate, distance,
+ * and elapsed time, while interacting with a connected phone and exercise tracker.
+ *
+ * @property applicationScope The coroutine scope for launching asynchronous tasks.
+ * @property connectorToPhone The communication client that handles messaging actions with the phone.
+ * @property exerciseTracker The tracker responsible for monitoring heart rate and exercise status.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class RunningTracker(
     private val applicationScope: CoroutineScope,
@@ -28,12 +36,21 @@ class RunningTracker(
     private val _heartRate = MutableStateFlow(0)
     val heartRate = _heartRate.asStateFlow()
 
+    /**
+     * Tracks whether the exercise session is currently active.
+     */
     private val _isTracking = MutableStateFlow(false)
     val isTracking = _isTracking.asStateFlow()
 
+    /***
+     * Indicates whether the exercise tracker is ready to monitor the session.
+     */
     private val _isTrackable = MutableStateFlow(false)
     val isTrackable = _isTrackable.asStateFlow()
 
+    /***
+     * Tracks the distance covered during the session, as reported by the phone.
+     */
     val distanceMeters: StateFlow<Int> = connectorToPhone
         .messagingActions
         .filterIsInstance<MessagingAction.DistanceUpdate>()
@@ -44,6 +61,9 @@ class RunningTracker(
             initialValue = 0
         )
 
+    /***
+     * Tracks the elapsed time during the session, as reported by the phone.
+     */
     val elapsedTime: StateFlow<Duration> = connectorToPhone
         .messagingActions
         .filterIsInstance<MessagingAction.TimeUpdate>()
@@ -62,6 +82,9 @@ class RunningTracker(
     }
 
 
+    /**
+     * Observes actions sent from the phone and updates the tracker state accordingly.
+     */
     private fun observePhoneActions() {
         connectorToPhone
             .messagingActions
@@ -69,6 +92,9 @@ class RunningTracker(
             .launchIn(applicationScope)
     }
 
+    /**
+     * Monitors connections to devices and prepares the exercise tracker when a device is connected.
+     */
     private fun observeDeviceConnections() {
         connectorToPhone
             .connectedDevice
@@ -77,6 +103,10 @@ class RunningTracker(
             .launchIn(applicationScope)
     }
 
+    /**
+     * Subscribes to heart rate updates from the exercise tracker when tracking is active.
+     * Updates the heart rate state and notifies the phone of the new value.
+     */
     private fun observeHeartRateUpdates() {
         isTracking
             .flatMapLatest { isTracking ->
@@ -87,6 +117,11 @@ class RunningTracker(
             .launchIn(applicationScope)
     }
 
+    /**
+     * Handles specific messaging actions received from the phone.
+     *
+     * @param action The `MessagingAction` received from the phone.
+     */
     private fun handleMessagingAction(action: MessagingAction) {
         when (action) {
             MessagingAction.Trackable -> _isTrackable.value = true
@@ -95,6 +130,11 @@ class RunningTracker(
         }
     }
 
+    /**
+     * Updates the heart rate state and notifies the phone with the new value.
+     *
+     * @param heartRate The current heart rate to be updated.
+     */
     private suspend fun updateHeartRate(heartRate: Int) {
         _heartRate.value = heartRate
 

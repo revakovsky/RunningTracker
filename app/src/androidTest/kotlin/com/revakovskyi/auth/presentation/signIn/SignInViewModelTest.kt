@@ -27,6 +27,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
+/**
+ * Unit test class for testing the behavior of the `SignInViewModel`.
+ *
+ * This class verifies the functionality of the SignInViewModel, ensuring that user sign-in
+ * logic is correctly executed, and proper requests are sent to the server with expected
+ * state changes and data handling.
+ */
 class SignInViewModelTest {
 
     private lateinit var viewModel: SignInViewModel
@@ -34,6 +41,9 @@ class SignInViewModelTest {
     private lateinit var sessionStorageFake: SessionStorageFake
     private lateinit var mockEngine: TestMockEngine
 
+    /**
+     * Extension to provide a test coroutine dispatcher for asynchronous operations.
+     */
     companion object {
         @JvmField
         @RegisterExtension
@@ -86,6 +96,16 @@ class SignInViewModelTest {
     }
 
 
+    /**
+     * Verifies the sign-in functionality of the `SignInViewModel`.
+     *
+     * Steps:
+     * 1. Set initial state and validate default behavior.
+     * 2. Simulate user input (email and password) and trigger sign-in action.
+     * 3. Verify state updates in the view model.
+     * 4. Assert the outgoing HTTP request contains correct data and headers.
+     * 5. Check if the user session is correctly updated after a successful response.
+     */
     @Test
     fun testSignIn() = runTest {
         val state = viewModel.state

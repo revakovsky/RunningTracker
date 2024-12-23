@@ -10,6 +10,16 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
+/**
+ * A JUnit 5 extension to manage coroutine test dispatchers for unit tests.
+ *
+ * This extension sets a test dispatcher as the main dispatcher before each test and resets it
+ * after all tests have run. It helps in controlling coroutine execution during testing,
+ * making it deterministic and allowing the use of test dispatchers like `UnconfinedTestDispatcher`.
+ *
+ * @property testDispatcher The test dispatcher to be used as the main dispatcher.
+ * Defaults to `UnconfinedTestDispatcher`.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainCoroutineExtension(
     val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),

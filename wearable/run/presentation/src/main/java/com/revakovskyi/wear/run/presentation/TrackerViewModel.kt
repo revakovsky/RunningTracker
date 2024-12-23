@@ -54,6 +54,9 @@ class TrackerViewModel(
 
     private val hasBodySensorPermission = MutableStateFlow(false)
 
+    /**
+     * Determines if tracking is active based on the state of the tracker.
+     */
     private val isTracking: StateFlow<Boolean> = snapshotFlow {
         state.isRunActive && state.isTrackable && state.isConnectedPhoneNearby
     }.stateIn(
@@ -98,6 +101,9 @@ class TrackerViewModel(
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Synchronizes the tracker state with the exercise tracker to handle start, pause, or resume actions.
+     */
     private fun syncExerciseTracker() {
         isTracking
             .onEach { isTracking ->
@@ -111,6 +117,12 @@ class TrackerViewModel(
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Determines and executes the appropriate action (start, pause, resume) on the exercise tracker.
+     *
+     * @param isTracking Whether the tracker is currently active.
+     * @return Result indicating success or failure of the action.
+     */
     private suspend fun setActionToExerciseTracker(isTracking: Boolean) = when {
         isTracking && !state.hasStartedRunning -> exerciseTracker.startExercise()
         isTracking && state.hasStartedRunning -> exerciseTracker.resumeExercise()

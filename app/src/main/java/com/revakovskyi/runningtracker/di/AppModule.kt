@@ -12,6 +12,14 @@ import org.koin.dsl.module
 
 val appModule = module {
 
+    /**
+     * Provides a singleton instance of EncryptedSharedPreferences.
+     *
+     * EncryptedSharedPreferences ensures that the data stored in the preferences is encrypted
+     * using the AndroidX Security library.
+     *
+     * @return EncryptedSharedPreferences instance configured with AES256 encryption schemes for both keys and values.
+     */
     single<SharedPreferences> {
         EncryptedSharedPreferences(
             context = androidApplication(),

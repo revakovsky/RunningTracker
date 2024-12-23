@@ -21,6 +21,17 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
+/**
+ * Factory class for creating a configured [HttpClient] instance.
+ *
+ * This factory integrates various features such as:
+ * - Content negotiation for JSON
+ * - Logging for debugging
+ * - Default request configuration, including API key header
+ * - Authentication with Bearer tokens
+ *
+ * @property sessionStorage A storage implementation to manage authentication tokens.
+ */
 class HttpClientFactory(
     private val sessionStorage: SessionStorage,
 ) {
@@ -29,17 +40,13 @@ class HttpClientFactory(
         return HttpClient(engine) {
             install(ContentNegotiation) {
                 json(
-                    json = Json {
-                        ignoreUnknownKeys = true
-                    }
+                    json = Json { ignoreUnknownKeys = true }
                 )
             }
 
             install(Logging) {
                 logger = object : Logger {
-                    override fun log(message: String) {
-                        Timber.d(message)
-                    }
+                    override fun log(message: String) { Timber.d(message) }
                 }
                 level = LogLevel.ALL
             }
@@ -49,8 +56,15 @@ class HttpClientFactory(
                 header(key = "x-api-key", BuildConfig.API_KEY)
             }
 
+            /***
+             * Bearer token-based authentication
+             */
             install(Auth) {
                 bearer {
+
+                    /**
+                     * Load initial authentication tokens from the session storage.
+                     */
                     loadTokens {
                         val info = sessionStorage.get()
                         BearerTokens(
@@ -58,6 +72,11 @@ class HttpClientFactory(
                             refreshToken = info?.refreshToken ?: ""
                         )
                     }
+
+                    /**
+                     * Refresh tokens when the access token is invalid or expired.
+                     * This sends a request to the `/accessToken` endpoint to get a new access token.
+                     */
                     refreshTokens {
                         val info = sessionStorage.get()
                         val response = client.post<AccessTokenRequest, AccessTokenResponse>(

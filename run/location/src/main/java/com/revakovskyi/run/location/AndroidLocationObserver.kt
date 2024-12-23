@@ -28,6 +28,12 @@ class AndroidLocationObserver(
 
     private val client = LocationServices.getFusedLocationProviderClient(context)
 
+    /**
+     * Observes the user's location at regular intervals.
+     *
+     * @param interval The time interval (in milliseconds) for location updates.
+     * @return A `Flow` emitting `LocationWithAltitude` objects representing the user's location.
+     */
     override fun observeLocation(interval: Long): Flow<LocationWithAltitude> {
         return callbackFlow {
             checkGpsAndNetworkEnabled()
@@ -43,6 +49,9 @@ class AndroidLocationObserver(
         }
     }
 
+    /**
+     * Checks if GPS and Network providers are enabled and waits until they are.
+     */
     private suspend fun checkGpsAndNetworkEnabled() {
         val locationManager = context.getSystemService<LocationManager>()!!
         var isGpsEnabled = false
@@ -55,6 +64,11 @@ class AndroidLocationObserver(
         }
     }
 
+    /**
+     * Checks if the required location permissions are granted.
+     *
+     * @return `true` if permissions are not granted, `false` otherwise.
+     */
     private fun locationPermissionsNotGranted(): Boolean =
         ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
@@ -78,6 +92,12 @@ class AndroidLocationObserver(
             }
         }
 
+    /**
+     * Requests location updates from the `FusedLocationProviderClient`.
+     *
+     * @param interval The interval (in milliseconds) for location updates.
+     * @param locationCallback The callback to handle location updates.
+     */
     private fun requestLocationUpdates(
         interval: Long,
         locationCallback: LocationCallback,

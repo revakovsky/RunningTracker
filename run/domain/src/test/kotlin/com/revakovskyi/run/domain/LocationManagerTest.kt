@@ -23,6 +23,11 @@ import kotlin.math.roundToInt
 class LocationManagerTest {
 
     companion object {
+
+        /**
+         * A custom extension for managing the main coroutine dispatcher during testing.
+         * This ensures that coroutine-based operations use a test dispatcher.
+         */
         @JvmField
         @RegisterExtension
         val mainCoroutineExtension = MainCoroutineExtension()
@@ -50,6 +55,16 @@ class LocationManagerTest {
         )
     }
 
+    /**
+     * Verifies that `LocationManager` correctly combines location and heart rate data into `RunData` emissions.
+     *
+     * Steps:
+     * 1. Skip the initial empty emission
+     * 2. Starts location observation and tracking.
+     * 3. Simulates two location updates and checks that they are correctly aggregated.
+     * 4. Simulates two heart rate updates and verifies that they are added to the run data.
+     * 5. Checks that the calculated distance between two locations falls within a tolerance range.
+     */
     @Test
     fun testCombiningRunData() = runTest {
         locationManager.runData.test {

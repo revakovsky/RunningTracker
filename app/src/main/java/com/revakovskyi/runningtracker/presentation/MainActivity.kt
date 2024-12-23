@@ -40,6 +40,11 @@ class MainActivity : ComponentActivity() {
         showAppContent()
     }
 
+    /**
+     * Initializes objects required for dynamic feature module management.
+     * This sets up the `SplitInstallManager` and `SplitInstallHelper` to handle
+     * module installation and interactions.
+     */
     private fun initSplitInstallObjects() {
         splitInstallManager = SplitInstallManagerFactory.create(applicationContext)
 
@@ -51,6 +56,11 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    /**
+     * Displays the main content of the application.
+     * Checks the authentication state to determine the appropriate navigation root.
+     * Dynamically displays the analytics installation dialog if required.
+     */
     private fun showAppContent() {
         setContent {
             RunningTrackerTheme {
@@ -81,6 +91,11 @@ class MainActivity : ComponentActivity() {
         splitInstallHelper?.unregisterListener()
     }
 
+    /**
+     * Handles the installation or starting of the analytics feature module.
+     * If the module is already installed, it launches the corresponding activity;
+     * otherwise, it initiates the installation process.
+     */
     private fun installOrStartAnalyticsFeature() {
         val containsThisModule = splitInstallManager.installedModules.contains(ANALYTICS_MODULE_NAME)
 
@@ -94,6 +109,10 @@ class MainActivity : ComponentActivity() {
             .also(::startActivity)
     }
 
+    /**
+     * Initiates the installation of the Analytics feature module.
+     * Displays a toast message if the installation fails.
+     */
     private fun installAnalyticsActivity() {
         val request = SplitInstallRequest.newBuilder()
             .addModule(ANALYTICS_MODULE_NAME)

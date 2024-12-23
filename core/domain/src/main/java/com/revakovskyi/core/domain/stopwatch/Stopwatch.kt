@@ -8,6 +8,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 object Stopwatch {
 
+    /**
+     * Emits the elapsed time in a flow at a fixed interval of 200 milliseconds.
+     *
+     * This function creates a cold [Flow] that continuously calculates the time difference
+     * between consecutive emissions.
+     *
+     * @return A [Flow] of [Duration], representing the time elapsed since the last emission.
+     */
     fun timeAndEmit(): Flow<Duration> {
         return flow {
             var lastEmitTime = System.currentTimeMillis()

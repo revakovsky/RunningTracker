@@ -23,6 +23,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 
+/**
+ * A scheduler responsible for managing synchronization of run-related data with remote storage.
+ * It handles scheduling and launching various types of WorkManager tasks for:
+ * - Fetching runs from the remote server periodically.
+ * - Creating runs on the remote server.
+ * - Deleting runs from the remote server.
+ *
+ * @param context The application context for accessing system resources.
+ * @param pendingSyncDao Data Access Object for handling pending sync operations.
+ * @param sessionStorage Storage for user session information.
+ * @param applicationScope Coroutine scope for managing asynchronous operations.
+ */
 class SyncRunWorkerScheduler(
     context: Context,
     private val pendingSyncDao: RunPendingSyncDao,
@@ -46,6 +58,13 @@ class SyncRunWorkerScheduler(
             .await()
     }
 
+    /**
+     * Schedules periodic fetching of runs from the remote server.
+     *
+     * Ensures only one fetch operation is scheduled at any time by checking for existing tasks.
+     *
+     * @param interval The interval at which the runs should be fetched.
+     */
     private suspend fun scheduleFetchRunWorker(interval: Duration) {
         if (hasSyncingBeenAlreadyScheduled()) return
 
@@ -59,6 +78,15 @@ class SyncRunWorkerScheduler(
             .await()
     }
 
+    /**
+     * Schedules a one-time task for creating a new run on the remote server.
+     *
+     * - Saves the pending run to local storage to track its state.
+     * - Creates a `CreateRunWorker` task with the run data and enqueues it.
+     *
+     * @param run The run data to be created.
+     * @param mapPictureBytes The associated map image data as a byte array.
+     */
     private suspend fun scheduleCreateRunWorker(run: Run, mapPictureBytes: ByteArray) {
         val userId = sessionStorage.get()?.userId ?: return
         val pendingRun = RunPendingSyncEntity(
@@ -76,6 +104,14 @@ class SyncRunWorkerScheduler(
         launchWorkManager(workRequest)
     }
 
+    /**
+     * Schedules a one-time task for deleting a run from the remote server.
+     *
+     * - Saves the pending deletion to local storage to track its state.
+     * - Creates a `DeleteRunWorker` task with the run ID and enqueues it.
+     *
+     * @param runId The ID of the run to be deleted.
+     */
     private suspend fun scheduleDeleteRunWorker(runId: RunId) {
         val userId = sessionStorage.get()?.userId ?: return
         val deletedEntity = DeletedRunSyncEntity(
@@ -93,6 +129,11 @@ class SyncRunWorkerScheduler(
         launchWorkManager(workRequest)
     }
 
+    /**
+     * Checks if a fetch operation has already been scheduled.
+     *
+     * @return `true` if a fetch operation is already scheduled, otherwise `false`.
+     */
     private suspend fun hasSyncingBeenAlreadyScheduled(): Boolean {
         return withContext(Dispatchers.IO) {
             workManager

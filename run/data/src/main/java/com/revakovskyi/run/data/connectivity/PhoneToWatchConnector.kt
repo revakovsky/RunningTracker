@@ -21,6 +21,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 
+/**
+ * A connector that facilitates communication between a phone and a connected smartwatch.
+ * It establishes connections, listens for messages, and sends actions based on app logic.
+ *
+ * @param nodeDiscovery Used to discover connected wearable nodes (e.g., smartwatch devices).
+ * @param applicationScope The scope in which this connector operates, ensuring lifecycle-aware coroutines.
+ * @param messagingClient Manages sending and receiving messages between the phone and the smartwatch.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class PhoneToWatchConnector(
     nodeDiscovery: NodeDiscovery,
@@ -28,11 +36,26 @@ class PhoneToWatchConnector(
     private val messagingClient: MessagingClient,
 ) : ConnectorToWatch {
 
+    /**
+     * Tracks the currently connected device node.
+     * Updated when a suitable nearby node is discovered.
+     */
     private val _connectedDevice = MutableStateFlow<DeviceNode?>(null)
     override val connectedDevice = _connectedDevice.asStateFlow()
 
+    /**
+     * Tracks whether the device is in a state where it can be monitored or tracked.
+     */
     private val isTrackable = MutableStateFlow(false)
 
+    /**
+     * A flow of messaging actions received from the connected smartwatch.
+     * It listens for connection requests and responds with trackable/untrackable status.
+     *
+     * - Discovers connected nodes using `NodeDiscovery`.
+     * - Connects to a node if one is found and nearby.
+     * - Processes incoming messaging actions such as connection requests.
+     */
     override val messagingActions: Flow<MessagingAction> = nodeDiscovery
         .observeConnectedDevices(localDeviceType = DeviceType.PHONE)
         .flatMapLatest { deviceNodes ->
@@ -56,6 +79,10 @@ class PhoneToWatchConnector(
             started = SharingStarted.Eagerly
         )
 
+
+    /***
+     * Monitors trackable state and sends connection status updates to the smartwatch.
+     */
     init {
         _connectedDevice
             .filterNotNull()
@@ -76,6 +103,13 @@ class PhoneToWatchConnector(
         this.isTrackable.value = isTrackable
     }
 
+    /**
+     * Sends a specific action to the smartwatch.
+     * If no connection is currently available, the action is queued.
+     *
+     * @param action The `MessagingAction` to be sent to the smartwatch.
+     * @return A `Result` indicating success or failure of the action transmission.
+     */
     override suspend fun sendActionToWatch(action: MessagingAction): EmptyDataResult<MessagingError> {
         return messagingClient.sendOrQueueAction(action)
     }

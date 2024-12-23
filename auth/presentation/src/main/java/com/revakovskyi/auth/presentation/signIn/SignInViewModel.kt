@@ -30,11 +30,18 @@ class SignInViewModel(
     private val eventChannel = Channel<SignInEvent>()
     val events = eventChannel.receiveAsFlow()
 
+    /**
+     * Updates the state for testing purposes.
+     * This function is only intended for use in unit tests to directly set the state.
+     */
     fun setStateForTest(newState: SignInState) {
         state = newState
     }
 
     init {
+        /**
+         * Combines the email and password inputs to validate whether the user can sign in.
+         */
         combine(
             snapshotFlow { state.email },
             snapshotFlow { state.password }
@@ -72,11 +79,7 @@ class SignInViewModel(
                                 UiText.StringResource(R.string.error_email_password_incorrect)
                             )
                         )
-                    } else {
-                        eventChannel.send(
-                            SignInEvent.Error(result.error.asUiText())
-                        )
-                    }
+                    } else eventChannel.send(SignInEvent.Error(result.error.asUiText()))
                 }
 
                 is Result.Success -> eventChannel.send(SignInEvent.SignInSuccess)

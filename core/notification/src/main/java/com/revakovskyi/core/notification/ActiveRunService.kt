@@ -25,6 +25,13 @@ import kotlinx.coroutines.flow.onEach
 import org.koin.android.ext.android.inject
 import kotlin.time.Duration
 
+/**
+ * A foreground service for tracking an active run.
+ *
+ * This service handles notifications to keep users informed about the current run's duration and allows
+ * the app to continue monitoring the run even when the app is in the background. It interacts with
+ * the notification system and provides deep linking to navigate back to the active run screen.
+ */
 class ActiveRunService : Service() {
 
     private val notificationManager by lazy { getSystemService<NotificationManager>()!! }
@@ -35,6 +42,9 @@ class ActiveRunService : Service() {
             .setContentTitle(getString(R.string.active_run))
     }
 
+    /***
+     * Injected state flow tracking elapsed time for the run
+     */
     private val elapsedTime by inject<StateFlow<Duration>>()
 
     private var serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -50,6 +60,13 @@ class ActiveRunService : Service() {
         return START_STICKY
     }
 
+    /**
+     * Extracts the activity class from the intent, used to create a pending intent for navigation.
+     *
+     * @param intent The intent containing the activity class name.
+     * @return The extracted class object.
+     * @throws IllegalArgumentException If the activity class name is not provided.
+     */
     private fun extractActivityClass(intent: Intent): Class<*> {
         val activityClassName = intent.getStringExtra(EXTRA_ACTIVITY_CLASS)
             ?: throw IllegalArgumentException(getString(R.string.no_activity_class_provided))
@@ -75,6 +92,12 @@ class ActiveRunService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * Creates a notification with a pending intent for deep linking back to the active run screen.
+     *
+     * @param activityClass The class to navigate back to.
+     * @return The built notification.
+     */
     private fun createNotificationWithPendingIntent(activityClass: Class<*>): Notification {
         val activityIntent = createActivityIntent(activityClass)
         val pendingIntent = createPendingIntent(activityIntent)
@@ -85,6 +108,9 @@ class ActiveRunService : Service() {
             .build()
     }
 
+    /**
+     * Creates an intent for the activity to navigate back to from the notification.
+     */
     private fun createActivityIntent(activityClass: Class<*>): Intent {
         return Intent(applicationContext, activityClass).apply {
             data = DEEP_LINK.toUri()
@@ -92,6 +118,12 @@ class ActiveRunService : Service() {
         }
     }
 
+    /**
+     * Creates a pending intent with a back stack for navigation.
+     *
+     * @param activityIntent The intent to the target activity.
+     * @return The created pending intent.
+     */
     private fun createPendingIntent(activityIntent: Intent): PendingIntent? {
         return TaskStackBuilder.create(applicationContext).run {
             addNextIntentWithParentStack(activityIntent)
@@ -99,6 +131,9 @@ class ActiveRunService : Service() {
         }
     }
 
+    /**
+     * Updates the notification with the current elapsed time using a coroutine flow.
+     */
     private fun updateNotification() {
         elapsedTime
             .onEach { elapsedTime ->
@@ -131,6 +166,9 @@ class ActiveRunService : Service() {
         private const val ACTION_START = "ACTION_START"
         private const val ACTION_STOP = "ACTION_STOP"
 
+        /**
+         * Creates an intent to start the service with the specified activity class.
+         */
         fun createServiceStartingIntent(context: Context, activityClass: Class<*>): Intent {
             return Intent(context, ActiveRunService::class.java).apply {
                 action = ACTION_START
@@ -138,6 +176,9 @@ class ActiveRunService : Service() {
             }
         }
 
+        /**
+         * Creates an intent to stop the service.
+         */
         fun createServiceStoppingIntent(context: Context): Intent {
             return Intent(context, ActiveRunService::class.java).apply {
                 action = ACTION_STOP
