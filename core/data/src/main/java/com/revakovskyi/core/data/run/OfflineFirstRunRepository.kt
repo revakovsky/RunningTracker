@@ -76,16 +76,6 @@ class OfflineFirstRunRepository(
     }
 
     /**
-     * Inserts or updates a list of runs into the local data source.
-     * Used during synchronization with the remote data source.
-     */
-    private suspend fun upsertRunsToLocalRunDataSource(runs: List<Run>): EmptyDataResult<DataError.Local> =
-        applicationScope.async {
-            localRunDataSource.upsertRuns(runs).asEmptyDataResult()
-        }.await()
-
-
-    /**
      * Adds or updates a single run. Handles offline creation by scheduling a sync task.
      *
      * @param run The run object to be upserted.
@@ -102,6 +92,80 @@ class OfflineFirstRunRepository(
             is Result.Success -> upsertRunToLocalRunDataSource(remoteResult.data)
         }
     }
+
+    /**
+     * Deletes a run by ID. Ensures local and remote consistency.
+     * If a run was created and deleted offline, it avoids unnecessary sync.
+     */
+    override suspend fun deleteRun(id: RunId) {
+        localRunDataSource.deleteRun(id)
+
+        if (checkIfRunWasNotPushedToRemoteDB(id)) return
+
+        val remoteResult = applicationScope
+            .async { remoteRunDataSource.deleteRun(id) }
+            .await()
+
+        if (remoteResult is Result.Error) launchSyncSchedulerToDeleteRun(id)
+    }
+
+    /**
+     * Synchronizes pending runs (created or deleted) with the remote server.
+     * Handles offline-created runs and deleted runs, ensuring local consistency after sync.
+     */
+    override suspend fun syncPendingRuns() {
+        withContext(Dispatchers.IO) {
+            val userId = sessionStorage.get()?.userId ?: return@withContext
+
+            val createdRuns = async { runPendingSyncDao.getAllRunPendingSyncEntities(userId) }
+            val deletedRuns = async { runPendingSyncDao.getAllDeletedRunSyncEntities(userId) }
+
+            val createdJobs: List<Job> = createdRuns
+                .await()
+                .map { createdSyncEntity -> doTheJobOfPosting(createdSyncEntity) }
+
+            val deletedJobs: List<Job> = deletedRuns
+                .await()
+                .map { deletedSyncEntity -> doTheJobOfDeleting(deletedSyncEntity) }
+
+            createdJobs.forEach { it.join() }
+            deletedJobs.forEach { it.join() }
+        }
+    }
+
+    /**
+     * Deletes all runs from the local database.
+     */
+    override suspend fun deleteAllRuns() {
+        localRunDataSource.deleteAllRuns()
+    }
+
+    /**
+     * Logs the user out and clears authentication tokens.
+     *
+     * @return [EmptyDataResult] indicating success or failure of the logout operation.
+     */
+    override suspend fun logOut(): EmptyDataResult<DataError.Network> {
+        val result = client.get<Unit>(route = LOG_OUT_END_POINT).asEmptyDataResult()
+
+        client
+            .plugin(Auth).providers
+            .filterIsInstance<BearerAuthProvider>()
+            .firstOrNull()
+            ?.clearToken()
+
+        return result
+    }
+
+    /**
+     * Inserts or updates a list of runs into the local data source.
+     * Used during synchronization with the remote data source.
+     */
+    private suspend fun upsertRunsToLocalRunDataSource(runs: List<Run>): EmptyDataResult<DataError.Local> =
+        applicationScope.async {
+            localRunDataSource.upsertRuns(runs).asEmptyDataResult()
+        }.await()
+
 
     private suspend fun postRunToRemoteDataSource(
         run: Run,
@@ -139,22 +203,6 @@ class OfflineFirstRunRepository(
         }.await()
 
     /**
-     * Deletes a run by ID. Ensures local and remote consistency.
-     * If a run was created and deleted offline, it avoids unnecessary sync.
-     */
-    override suspend fun deleteRun(id: RunId) {
-        localRunDataSource.deleteRun(id)
-
-        if (checkIfRunWasNotPushedToRemoteDB(id)) return
-
-        val remoteResult = applicationScope
-            .async { remoteRunDataSource.deleteRun(id) }
-            .await()
-
-        if (remoteResult is Result.Error) launchSyncSchedulerToDeleteRun(id)
-    }
-
-    /**
      * Checks if a run created offline was deleted before syncing to the remote database.
      * If so, removes it from the pending sync table.
      */
@@ -174,30 +222,6 @@ class OfflineFirstRunRepository(
                 syncType = SyncRunScheduler.SyncType.DeleteRun(id)
             )
         }.join()
-    }
-
-    /**
-     * Synchronizes pending runs (created or deleted) with the remote server.
-     * Handles offline-created runs and deleted runs, ensuring local consistency after sync.
-     */
-    override suspend fun syncPendingRuns() {
-        withContext(Dispatchers.IO) {
-            val userId = sessionStorage.get()?.userId ?: return@withContext
-
-            val createdRuns = async { runPendingSyncDao.getAllRunPendingSyncEntities(userId) }
-            val deletedRuns = async { runPendingSyncDao.getAllDeletedRunSyncEntities(userId) }
-
-            val createdJobs: List<Job> = createdRuns
-                .await()
-                .map { createdSyncEntity -> doTheJobOfPosting(createdSyncEntity) }
-
-            val deletedJobs: List<Job> = deletedRuns
-                .await()
-                .map { deletedSyncEntity -> doTheJobOfDeleting(deletedSyncEntity) }
-
-            createdJobs.forEach { it.join() }
-            deletedJobs.forEach { it.join() }
-        }
     }
 
     /**
@@ -243,30 +267,6 @@ class OfflineFirstRunRepository(
         applicationScope.launch {
             runPendingSyncDao.deleteDeletedRunSyncEntity(runId = runId)
         }.join()
-    }
-
-    /**
-     * Deletes all runs from the local database.
-     */
-    override suspend fun deleteAllRuns() {
-        localRunDataSource.deleteAllRuns()
-    }
-
-    /**
-     * Logs the user out and clears authentication tokens.
-     *
-     * @return [EmptyDataResult] indicating success or failure of the logout operation.
-     */
-    override suspend fun logOut(): EmptyDataResult<DataError.Network> {
-        val result = client.get<Unit>(route = LOG_OUT_END_POINT).asEmptyDataResult()
-
-        client
-            .plugin(Auth).providers
-            .filterIsInstance<BearerAuthProvider>()
-            .firstOrNull()
-            ?.clearToken()
-
-        return result
     }
 
 }
