@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.runningtracker.android.dynamic.feature)
+    alias(libs.plugins.runningtracker.jvm.ktor)
 }
 android {
     namespace = "com.revakovskyi.analytics.analytics_feature"

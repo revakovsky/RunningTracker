@@ -15,10 +15,10 @@ fun AnalyticsNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screens.Analytics.route
+        startDestination = Routes.Analytics
     ) {
 
-        composable(route = Screens.Analytics.route) {
+        composable<Routes.Analytics> {
             AnalyticsScreenRoot(onBackClick = onCloseAnalytics)
         }
 

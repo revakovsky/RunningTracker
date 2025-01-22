@@ -1,7 +1,10 @@
 package com.revakovskyi.analytics.analytics_feature.nav
 
-sealed class Screens(val route: String) {
+import kotlinx.serialization.Serializable
 
-    data object Analytics : Screens(route = "analytics")
+sealed interface Routes {
+
+    @Serializable
+    data object Analytics : Routes
 
 }
