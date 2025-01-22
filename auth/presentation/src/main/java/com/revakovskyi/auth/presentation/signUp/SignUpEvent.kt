@@ -5,6 +5,7 @@ import com.revakovskyi.core.peresentation.ui.UiText
 sealed interface SignUpEvent {
 
     data object RegistrationSuccess : SignUpEvent
+    data object OnSignInClick : SignUpEvent
     data class Error(val error: UiText) : SignUpEvent
 
 }

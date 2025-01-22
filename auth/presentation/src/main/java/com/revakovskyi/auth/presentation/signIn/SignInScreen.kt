@@ -63,18 +63,14 @@ fun SignInScreenRoot(
                 Toast.makeText(context, R.string.successfully_signed_in, Toast.LENGTH_LONG).show()
                 onSuccessfulSignIn()
             }
+
+            SignInEvent.OnSignUpClick -> onSignUpClick()
         }
     }
 
     SignInScreen(
         state = viewModel.state,
-        onAction = { action ->
-            when (action) {
-                SignInAction.OnSignUpClick -> onSignUpClick()
-                else -> Unit
-            }
-            viewModel.onAction(action)
-        }
+        onAction = viewModel::onAction
     )
 
 }

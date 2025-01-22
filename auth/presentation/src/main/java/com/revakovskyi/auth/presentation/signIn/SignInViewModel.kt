@@ -30,13 +30,6 @@ class SignInViewModel(
     private val eventChannel = Channel<SignInEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    /**
-     * Updates the state for testing purposes.
-     * This function is only intended for use in unit tests to directly set the state.
-     */
-    fun setStateForTest(newState: SignInState) {
-        state = newState
-    }
 
     init {
         /**
@@ -52,10 +45,19 @@ class SignInViewModel(
         }.launchIn(viewModelScope)
     }
 
+
+    /**
+     * Updates the state for testing purposes.
+     * This function is only intended for use in unit tests to directly set the state.
+     */
+    fun setStateForTest(newState: SignInState) {
+        state = newState
+    }
+
     fun onAction(action: SignInAction) {
         when (action) {
             SignInAction.OnSignInClick -> signIn()
-            SignInAction.OnSignUpClick -> Unit
+            SignInAction.OnSignUpClick -> eventChannel.trySend(SignInEvent.OnSignUpClick)
             SignInAction.OnTogglePasswordVisibility -> togglePasswordVisibility()
             is SignInAction.EmailEntered -> emailEntered(action.email)
             is SignInAction.PasswordEntered -> passwordEntered(action.password)

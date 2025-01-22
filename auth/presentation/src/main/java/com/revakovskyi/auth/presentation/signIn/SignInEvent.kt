@@ -6,5 +6,6 @@ sealed interface SignInEvent {
 
     data class Error(val error: UiText) : SignInEvent
     data object SignInSuccess : SignInEvent
+    data object OnSignUpClick : SignInEvent
 
 }

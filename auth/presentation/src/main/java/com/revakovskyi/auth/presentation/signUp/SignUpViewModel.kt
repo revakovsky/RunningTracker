@@ -35,6 +35,22 @@ class SignUpViewModel(
      * Updates the state to reflect the validity of user inputs and the ability to register.
      */
     init {
+        observeInputEmail()
+        observeInputPassword()
+    }
+
+
+    fun onAction(action: SignUpAction) {
+        when (action) {
+            SignUpAction.OnRegisterClick -> register()
+            SignUpAction.OnSignInClick -> eventChannel.trySend(SignUpEvent.OnSignInClick)
+            SignUpAction.OnTogglePasswordVisibilityClick -> togglePasswordVisibility()
+            is SignUpAction.EmailEntered -> emailEntered(action.email)
+            is SignUpAction.PasswordEntered -> passwordEntered(action.password)
+        }
+    }
+
+    private fun observeInputEmail() {
         snapshotFlow { state.email }
             .onEach { email ->
                 val isValidEmail = userDataValidator.isValidEmail(email)
@@ -45,7 +61,9 @@ class SignUpViewModel(
                 )
             }
             .launchIn(viewModelScope)
+    }
 
+    private fun observeInputPassword() {
         snapshotFlow { state.password }
             .onEach { password ->
                 val passwordValidationState = userDataValidator.isValidPassword(password)
@@ -56,16 +74,6 @@ class SignUpViewModel(
                 )
             }
             .launchIn(viewModelScope)
-    }
-
-    fun onAction(action: SignUpAction) {
-        when (action) {
-            SignUpAction.OnRegisterClick -> register()
-            SignUpAction.OnSignInClick -> Unit
-            SignUpAction.OnTogglePasswordVisibilityClick -> togglePasswordVisibility()
-            is SignUpAction.EmailEntered -> emailEntered(action.email)
-            is SignUpAction.PasswordEntered -> passwordEntered(action.password)
-        }
     }
 
     private fun register() {
