@@ -40,6 +40,21 @@ class MainActivity : ComponentActivity() {
         showAppContent()
     }
 
+    override fun onResume() {
+        super.onResume()
+        splitInstallHelper?.registerListener()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        splitInstallHelper?.unregisterListener()
+    }
+
+    override fun onDestroy() {
+        splitInstallHelper = null
+        super.onDestroy()
+    }
+
     /**
      * Initializes objects required for dynamic feature module management.
      * This sets up the `SplitInstallManager` and `SplitInstallHelper` to handle
@@ -83,16 +98,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        splitInstallHelper?.registerListener()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        splitInstallHelper?.unregisterListener()
-    }
-
     /**
      * Handles the installation or starting of the analytics feature module.
      * If the module is already installed, it launches the corresponding activity;
@@ -134,11 +139,6 @@ class MainActivity : ComponentActivity() {
             getString(stringResId),
             Toast.LENGTH_LONG
         ).show()
-    }
-
-    override fun onDestroy() {
-        splitInstallHelper = null
-        super.onDestroy()
     }
 
 
