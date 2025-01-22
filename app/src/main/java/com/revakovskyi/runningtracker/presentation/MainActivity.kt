@@ -24,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var splitInstallManager: SplitInstallManager
+    private var splitInstallManager: SplitInstallManager? = null
     private var splitInstallHelper: SplitInstallHelper? = null
 
     private val viewModel by viewModel<MainViewModel>()
@@ -48,12 +48,14 @@ class MainActivity : ComponentActivity() {
     private fun initSplitInstallObjects() {
         splitInstallManager = SplitInstallManagerFactory.create(applicationContext)
 
-        splitInstallHelper = SplitInstallHelper(
-            splitInstallManager = splitInstallManager,
-            onShowResultingMessage = { stringResId -> showToast(stringResId) },
-            onChangeAnalyticsDialogVisibility = { isVisible -> viewModel.setAnalyticsDialogVisibility(isVisible) },
-            onRequiresUserConfirmation = { state -> splitInstallManager.startConfirmationDialogForResult(state, this@MainActivity, 0) }
-        )
+        splitInstallManager?.let {
+            splitInstallHelper = SplitInstallHelper(
+                splitInstallManager = it,
+                onShowResultingMessage = { stringResId -> showToast(stringResId) },
+                onChangeAnalyticsDialogVisibility = { isVisible -> viewModel.setAnalyticsDialogVisibility(isVisible) },
+                onRequiresUserConfirmation = { state -> it.startConfirmationDialogForResult(state, this@MainActivity, 0) }
+            )
+        }
     }
 
     /**
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
      * otherwise, it initiates the installation process.
      */
     private fun installOrStartAnalyticsFeature() {
-        val containsThisModule = splitInstallManager.installedModules.contains(ANALYTICS_MODULE_NAME)
+        val containsThisModule = splitInstallManager?.installedModules?.contains(ANALYTICS_MODULE_NAME) ?: false
 
         if (containsThisModule) launchAnalyticsActivity()
         else installAnalyticsActivity()
@@ -119,8 +121,8 @@ class MainActivity : ComponentActivity() {
             .build()
 
         splitInstallManager
-            .startInstall(request)
-            .addOnFailureListener {
+            ?.startInstall(request)
+            ?.addOnFailureListener {
                 it.printStackTrace()
                 showToast(R.string.error_could_not_load_a_module)
             }
@@ -135,8 +137,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         splitInstallHelper = null
+        super.onDestroy()
     }
 
 
