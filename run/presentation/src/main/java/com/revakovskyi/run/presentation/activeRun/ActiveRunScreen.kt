@@ -57,19 +57,14 @@ fun ActiveRunScreenRoot(
         when (event) {
             is ActiveRunEvent.Error -> showToastError(event.error.asString(context), context)
             ActiveRunEvent.RunSaved -> onFinishRun()
+            ActiveRunEvent.OnBackClick -> onFinishRun()
         }
     }
 
     ActiveRunScreen(
         state = viewModel.state,
         onServiceToggle = onServiceToggle,
-        onAction = { action ->
-            when (action) {
-                ActiveRunAction.OnBackClick -> if (!viewModel.state.hasStartedRunning) onFinishRun()
-                else -> Unit
-            }
-            viewModel.onAction(action)
-        }
+        onAction = viewModel::onAction
     )
 
 }

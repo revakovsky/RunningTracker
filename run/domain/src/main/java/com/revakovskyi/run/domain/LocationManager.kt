@@ -120,6 +120,13 @@ class LocationManager(
         connectorToWatch.setIsTrackable(isTrackable = false)
     }
 
+    fun finishRun() {
+        stopObservingLocation()
+        setIsTracking(isTracking = false)
+        _elapsedTime.value = ZERO
+        _runData.value = RunData()
+    }
+
     private fun observeElapsedTimeUpdates() {
         _isTracking
             .onEach { isTracking ->
@@ -210,13 +217,6 @@ class LocationManager(
             .distinctUntilChanged()
             .onEach { connectorToWatch.sendActionToWatch(MessagingAction.DistanceUpdate(it)) }
             .launchIn(applicationScope)
-    }
-
-    fun finishRun() {
-        stopObservingLocation()
-        setIsTracking(isTracking = false)
-        _elapsedTime.value = ZERO
-        _runData.value = RunData()
     }
 
 }

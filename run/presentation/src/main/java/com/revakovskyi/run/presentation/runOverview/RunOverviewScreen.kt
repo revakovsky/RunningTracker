@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.revakovskyi.core.peresentation.ui.ObserveAsEvents
 import com.revakovskyi.core.presentation.designsystem.components.TrackerFloatingActionButton
 import com.revakovskyi.core.presentation.designsystem.components.TrackerScaffold
 import com.revakovskyi.core.presentation.designsystem.components.TrackerToolbar
@@ -44,17 +45,17 @@ fun RunOverviewScreenRoot(
 
     BackHandler { (context as ComponentActivity).finish() }
 
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            RunOverviewEvent.OnAnalyticsClick -> onAnalyticsClick()
+            RunOverviewEvent.OnStartRunClick -> onStartRunClick()
+            RunOverviewEvent.OnLogOutClick -> onLogOutClick()
+        }
+    }
+
     RunOverviewScreen(
         state = viewModel.state,
-        onAction = { action ->
-            when (action) {
-                RunOverviewAction.OnStartRunClick -> onStartRunClick()
-                RunOverviewAction.OnLogOutClick -> onLogOutClick()
-                RunOverviewAction.OnAnalyticsClick -> onAnalyticsClick()
-                else -> Unit
-            }
-            viewModel.onAction(action)
-        }
+        onAction = viewModel::onAction
     )
 
 }

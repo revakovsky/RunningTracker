@@ -68,6 +68,19 @@ class KtorRemoteRunDataSource(
     }
 
     /**
+     * Deletes a specific run from the remote server using its unique ID.
+     *
+     * @param id The unique identifier of the run to be deleted.
+     * @return An `EmptyDataResult` indicating success or failure with `DataError.Network`.
+     */
+    override suspend fun deleteRun(id: String): EmptyDataResult<DataError.Network> {
+        return httpClient.delete(
+            route = POST_DELETE_END_POINT,
+            queryParameters = mapOf("id" to id)
+        )
+    }
+
+    /**
      * Helper function to construct and send a multipart HTTP request containing the run data and map picture.
      *
      * @param runRequestJson The JSON string representation of the run data.
@@ -107,19 +120,6 @@ class KtorRemoteRunDataSource(
                 append(HttpHeaders.ContentDisposition, "filename=map_picture.jpg")
             })
         }
-    }
-
-    /**
-     * Deletes a specific run from the remote server using its unique ID.
-     *
-     * @param id The unique identifier of the run to be deleted.
-     * @return An `EmptyDataResult` indicating success or failure with `DataError.Network`.
-     */
-    override suspend fun deleteRun(id: String): EmptyDataResult<DataError.Network> {
-        return httpClient.delete(
-            route = POST_DELETE_END_POINT,
-            queryParameters = mapOf("id" to id)
-        )
     }
 
 }

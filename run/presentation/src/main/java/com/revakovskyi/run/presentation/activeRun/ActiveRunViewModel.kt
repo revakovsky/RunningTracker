@@ -71,6 +71,33 @@ class ActiveRunViewModel(
         observeWatchActions()
     }
 
+
+    override fun onCleared() {
+        super.onCleared()
+        if (!ActiveRunService.isServiceActive.value) {
+            applicationScope.launch {
+                connectorToWatch.sendActionToWatch(MessagingAction.Untrackable)
+            }
+            locationManager.stopObservingLocation()
+        }
+    }
+
+    fun onAction(action: ActiveRunAction, triggeredOnPhone: Boolean = true) {
+        if (triggeredOnPhone) sendActionToWatch(action)
+
+        when (action) {
+            ActiveRunAction.OnDismissDialog -> Unit
+            ActiveRunAction.OnFinishRunClick -> finishCurrentRun()
+            ActiveRunAction.OnResumeRunClick -> resumeRun()
+            ActiveRunAction.OnToggleRunClick -> toggleRun()
+            is ActiveRunAction.SubmitLocationPermission -> submitLocationPermission(action)
+            is ActiveRunAction.SubmitNotificationPermission -> submitNotificationPermission(action)
+            ActiveRunAction.DismissRationaleDialog -> dismissRationaleDialog()
+            ActiveRunAction.OnBackClick -> stopTracking()
+            is ActiveRunAction.OnSaveCurrentRun -> saveCurrentRun(action.mapPictureBytes)
+        }
+    }
+
     private fun observeLocationPermission() {
         hasLocationPermission
             .onEach { hasPermission ->
@@ -107,23 +134,6 @@ class ActiveRunViewModel(
             .elapsedTime
             .onEach { duration -> state = state.copy(elapsedTime = duration) }
             .launchIn(viewModelScope)
-    }
-
-
-    fun onAction(action: ActiveRunAction, triggeredOnPhone: Boolean = true) {
-        if (triggeredOnPhone) sendActionToWatch(action)
-
-        when (action) {
-            ActiveRunAction.OnDismissDialog -> Unit
-            ActiveRunAction.OnFinishRunClick -> finishCurrentRun()
-            ActiveRunAction.OnResumeRunClick -> resumeRun()
-            ActiveRunAction.OnToggleRunClick -> toggleRun()
-            is ActiveRunAction.SubmitLocationPermission -> submitLocationPermission(action)
-            is ActiveRunAction.SubmitNotificationPermission -> submitNotificationPermission(action)
-            ActiveRunAction.DismissRationaleDialog -> dismissRationaleDialog()
-            ActiveRunAction.OnBackClick -> stopTracking()
-            is ActiveRunAction.OnSaveCurrentRun -> saveCurrentRun(action.mapPictureBytes)
-        }
     }
 
     private fun sendActionToWatch(action: ActiveRunAction) {
@@ -195,6 +205,7 @@ class ActiveRunViewModel(
     }
 
     private fun stopTracking() {
+        if (!state.hasStartedRunning) eventChannel.trySend(ActiveRunEvent.OnBackClick)
         state = state.copy(shouldTrack = false)
     }
 
@@ -276,16 +287,6 @@ class ActiveRunViewModel(
             if (state.hasStartedRunning) {
                 onAction(ActiveRunAction.OnResumeRunClick, triggeredOnPhone = false)
             } else onAction(ActiveRunAction.OnToggleRunClick, triggeredOnPhone = false)
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        if (!ActiveRunService.isServiceActive.value) {
-            applicationScope.launch {
-                connectorToWatch.sendActionToWatch(MessagingAction.Untrackable)
-            }
-            locationManager.stopObservingLocation()
         }
     }
 
