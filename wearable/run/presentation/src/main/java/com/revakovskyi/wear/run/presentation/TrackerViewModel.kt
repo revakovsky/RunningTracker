@@ -79,6 +79,19 @@ class TrackerViewModel(
         observePhoneActions()
     }
 
+
+    fun onAction(action: TrackerAction, triggeredOnWatch: Boolean = true) {
+        if (triggeredOnWatch) sendActionToPhone(action)
+
+        when (action) {
+            is TrackerAction.OnBodySensorPermissionResult -> handleBodySensorPermissionRequest(action.isGranted)
+            TrackerAction.OnFinishRunClick -> finishRun()
+            TrackerAction.OnToggleRunClick -> markRunAsActive(isActive = !state.isRunActive)
+            is TrackerAction.OnEnterAmbientMode -> enterAmbientMode(action.burnInProtectionRequired)
+            TrackerAction.OnExitAmbientMode -> exitAmbientMode()
+        }
+    }
+
     private fun observeConnectedPhone() {
         connectorToPhone
             .connectedDevice
@@ -202,19 +215,6 @@ class TrackerViewModel(
 
     private fun setTrackableValue(isTrackable: Boolean) {
         state = state.copy(isTrackable = isTrackable)
-    }
-
-
-    fun onAction(action: TrackerAction, triggeredOnWatch: Boolean = true) {
-        if (triggeredOnWatch) sendActionToPhone(action)
-
-        when (action) {
-            is TrackerAction.OnBodySensorPermissionResult -> handleBodySensorPermissionRequest(action.isGranted)
-            TrackerAction.OnFinishRunClick -> finishRun()
-            TrackerAction.OnToggleRunClick -> markRunAsActive(isActive = !state.isRunActive)
-            is TrackerAction.OnEnterAmbientMode -> enterAmbientMode(action.burnInProtectionRequired)
-            TrackerAction.OnExitAmbientMode -> exitAmbientMode()
-        }
     }
 
     private fun sendActionToPhone(action: TrackerAction) {

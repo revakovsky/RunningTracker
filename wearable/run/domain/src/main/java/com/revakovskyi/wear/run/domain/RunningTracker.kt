@@ -82,6 +82,10 @@ class RunningTracker(
     }
 
 
+    fun setIsTracking(isTracking: Boolean) {
+        _isTracking.value = isTracking
+    }
+
     /**
      * Observes actions sent from the phone and updates the tracker state accordingly.
      */
@@ -141,10 +145,6 @@ class RunningTracker(
         connectorToPhone.sendActionToPhone(
             action = MessagingAction.HeartRateUpdate(heartRate)
         )
-    }
-
-    fun setIsTracking(isTracking: Boolean) {
-        _isTracking.value = isTracking
     }
 
 }
