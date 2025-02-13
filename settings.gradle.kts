@@ -1,11 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-include(":core:android_test")
-
-
-include(":core:test")
-
-
 pluginManagement {
     includeBuild("build-logic")
     repositories {
@@ -65,3 +59,6 @@ include(":wearable:run:data")
 
 include(":core:connectivity:data")
 include(":core:connectivity:domain")
+
+include(":core:android_test")
+include(":core:test")

@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -67,10 +68,20 @@ private fun RunOverviewScreen(
     state: RunOverviewState,
     onAction: (action: RunOverviewAction) -> Unit,
 ) {
+    val context = LocalContext.current
+
     val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
-        state = topAppBarState
-    )
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state = topAppBarState)
+
+    val analyticsIcon = AnalyticsIcon
+    val logOutIcon = LogoutIcon
+
+    val menuItems = remember {
+        listOf(
+            DropDownItem(icon = analyticsIcon, title = context.getString(R.string.analytics)),
+            DropDownItem(icon = logOutIcon, title = context.getString(R.string.log_out)),
+        )
+    }
 
     TrackerScaffold(
         topAppBar = {
@@ -86,10 +97,7 @@ private fun RunOverviewScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                menuItems = listOf(
-                    DropDownItem(icon = AnalyticsIcon, title = stringResource(R.string.analytics)),
-                    DropDownItem(icon = LogoutIcon, title = stringResource(R.string.log_out)),
-                ),
+                menuItems = menuItems,
                 onMenuItemClick = { itemIndex ->
                     when (itemIndex) {
                         0 -> onAction(RunOverviewAction.OnAnalyticsClick)
