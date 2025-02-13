@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -52,10 +53,10 @@ class ActiveRunViewModel(
 
     private val hasLocationPermission = MutableStateFlow(false)
 
-    private val shouldTrack = snapshotFlow { state.shouldTrack }
+    private val shouldTrack: StateFlow<Boolean> = snapshotFlow { state.shouldTrack }
         .stateIn(viewModelScope, SharingStarted.Lazily, state.shouldTrack)
 
-    private val isTracking = combine(
+    private val isTracking: StateFlow<Boolean> = combine(
         shouldTrack,
         hasLocationPermission
     ) { shouldTrack, hasLocationPermission -> shouldTrack && hasLocationPermission }
@@ -240,9 +241,9 @@ class ActiveRunViewModel(
             totalElevationMeter = LocationDataCalculator.getTotalElevationMeter(locations),
             mapPictureUrl = null,
             avgHeartRate = if (state.runData.heartRates.isEmpty()) null
-                           else state.runData.heartRates.average().roundToInt(),
+            else state.runData.heartRates.average().roundToInt(),
             maxHeartRate = if (state.runData.heartRates.isEmpty()) null
-                           else state.runData.heartRates.max(),
+            else state.runData.heartRates.max(),
         )
     }
 
