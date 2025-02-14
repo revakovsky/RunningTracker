@@ -17,8 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.revakovskyi.run.presentation.R
 import com.revakovskyi.run.presentation.runOverview.models.RunDataUi
@@ -31,36 +31,40 @@ fun DataGridSection(
     runUi: RunUi,
     modifier: Modifier = Modifier,
 ) {
-    val runDataUiList = listOf(
-        RunDataUi(
-            paramName = stringResource(id = R.string.distance),
-            value = runUi.distance
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.pace),
-            value = runUi.pace
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.avg_speed),
-            value = runUi.avgSpeed
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.max_speed),
-            value = runUi.maxSpeed
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.total_elevation),
-            value = runUi.totalElevation
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.avg_heart_rate),
-            value = runUi.avgHeartRate
-        ),
-        RunDataUi(
-            paramName = stringResource(id = R.string.max_heart_rate),
-            value = runUi.maxHeartRate
-        ),
-    )
+    val context = LocalContext.current
+
+    val runDataUiList = remember {
+        listOf(
+            RunDataUi(
+                paramName = context.getString(R.string.distance),
+                value = runUi.distance
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.pace),
+                value = runUi.pace
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.avg_speed),
+                value = runUi.avgSpeed
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.max_speed),
+                value = runUi.maxSpeed
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.total_elevation),
+                value = runUi.totalElevation
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.avg_heart_rate),
+                value = runUi.avgHeartRate
+            ),
+            RunDataUi(
+                paramName = context.getString(R.string.max_heart_rate),
+                value = runUi.maxHeartRate
+            ),
+        )
+    }
 
     var maxWidth by remember { mutableIntStateOf(0) }
     val maxWidthDp = with(LocalDensity.current) { maxWidth.toDp() }

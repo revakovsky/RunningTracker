@@ -104,8 +104,7 @@ class ActiveRunViewModel(
             .onEach { hasPermission ->
                 if (hasPermission) locationManager.startObservingLocation()
                 else locationManager.stopObservingLocation()
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     private fun observeTrackingStatus() {
@@ -117,9 +116,7 @@ class ActiveRunViewModel(
     private fun observeLocationUpdates() {
         locationManager
             .currentLocation
-            .onEach { locationWithAltitude ->
-                state = state.copy(currentLocation = locationWithAltitude?.location)
-            }
+            .onEach { locationWithAltitude -> state = state.copy(currentLocation = locationWithAltitude?.location) }
             .launchIn(viewModelScope)
     }
 
@@ -187,15 +184,11 @@ class ActiveRunViewModel(
 
     private fun submitLocationPermission(action: ActiveRunAction.SubmitLocationPermission) {
         hasLocationPermission.value = action.hasAcceptedLocationPermission
-        state = state.copy(
-            showLocationRationale = action.showLocationPermissionRationale
-        )
+        state = state.copy(showLocationRationale = action.showLocationPermissionRationale)
     }
 
     private fun submitNotificationPermission(action: ActiveRunAction.SubmitNotificationPermission) {
-        state = state.copy(
-            showNotificationRationale = action.showNotificationPermissionRationale
-        )
+        state = state.copy(showNotificationRationale = action.showNotificationPermissionRationale)
     }
 
     private fun dismissRationaleDialog() {
