@@ -1,8 +1,6 @@
 # Running Tracker
 
-An app that tracks your runs, displays your routes on a map in real time, and keeps you connected
-across all your devices. The app also has the ability to connect wearable devices such as smart
-watches and manage your run status from either your phone or watch at the same time.
+Real-time run tracking app with map visualization, multi-device sync, and wearable support. Built with Jetpack Compose, Google Maps API, Room, MVI, Ktor
 
 ---
 
